@@ -1,29 +1,18 @@
-# README #
+# ZX UVC #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Проект устройства для видео захвата экрана спектрум совместимых клонов.
+RGB -> DCMI -> STM32H7 -> USB UVC
+### Поддерживаемые машины ###
 
-### What is this repository for? ###
+* ZX Pentagon
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Реализовано ###
 
-### How do I get set up? ###
+* UVC 320x240/256x192  
+* RGB555@50FPS - В OBS не поддерживается.
+* RGB888@20FPS - Поддерживается в OBS
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Не реализовано ###
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* Переключение таймингов на лету.
+* ZS Scorpion
