@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "name": "arm_c_cpp_properties",
+            "compilerPath": "C:/arm_tool/gcc/bin/arm-none-eabi-gcc.exe",
+            "includePath": [
+                "C:/arm_tool/gcc/arm-none-eabi/include",
+                "C:/arm_tool/gcc/arm-none-eabi/include/sys/",
+                "C:/arm_tool/gcc/lib/**",
+                "${workspaceRoot}\\Drivers\\**",
+                "${workspaceRoot}\\Core\\Src\\**",
+                "${workspaceRoot}\\Core\\Inc\\**", /*,
+                "${workspaceFolder}/usb_uvc/Inc",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                "${workspaceFolder}/app/GFX/inc",
+                "${workspaceFolder}/USB_DEVICE/App",
+                "${workspaceFolder}/USB_DEVICE/Target"*/
+                "${workspaceFolder}/USB_DEVICE/App",
+                "${workspaceFolder}/App/Retarget/inc",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                "${workspaceFolder}/USB_DEVICE/Target",
+                "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc",
+                "${workspaceFolder}/App/usb_uvc/Inc",
+                "${workspaceFolder}/Drivers/CMSIS/Core/Include"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32H743xx",
+                "M7",
+                "GCC_ARMCM7"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-arm"
+        }
+    ],
+    "version": 4
+}

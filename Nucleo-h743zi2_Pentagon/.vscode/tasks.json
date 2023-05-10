@@ -1,0 +1,119 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "label": "Make Build",
+      "type": "shell",
+      "command": "make -j10",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Make Clean",
+      "type": "shell",
+      "command": "make -s clean",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "STLink Write MCU Default",
+      "type": "shell",
+      "command": "ST-LINK_CLI.exe -P \"${workspaceRoot}/build/nuc-h7-uvc.bin\" 0x08000000 -Rst",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "STLink Write MCU with 1767",
+      "type": "shell",
+      "command": "ST-LINK_CLI.exe -c sn=55FF70067867515436531767 -P \"${workspaceRoot}/build/usbkb.bin\" 0x08000000 -rst -Run",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "STLink Write MCU with 0443",
+      "type": "shell",
+      "command": "ST-LINK_CLI.exe -c sn=37FF6A064D4E383538400443 -P \"${workspaceRoot}/build/usbkb.bin\" 0x08000000 -Rst -Run",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "STLink Reset MCU",
+      "type": "shell",
+      "command": "ST-LINK_CLI.exe -rst",
+      "options": {
+        "cwd": "${workspaceRoot}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": [
+            "/C"
+          ]
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

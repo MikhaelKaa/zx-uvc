@@ -1,0 +1,3 @@
+448х320
+256x192 - screen
+384x304	- screen + border

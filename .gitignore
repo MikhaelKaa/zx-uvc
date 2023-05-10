@@ -6,4 +6,5 @@ Nucleo-h743zi2/build/nuc-h7-uvc.elf
 Nucleo-h743zi2/build/nuc-h7-uvc.bin
 *.log
 *.o
+*.d
 *.lst

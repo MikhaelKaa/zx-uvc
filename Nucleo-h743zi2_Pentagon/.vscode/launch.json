@@ -1,0 +1,23 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Cortex Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "./build/nuc-h7-uvc.elf",
+			"svdFile": "./STM32H7x3.svd",
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "openocd",
+			"device": "stlink",
+			"device": "Cortex-M7",
+			"interface": "swd",
+			//"ipAddress": null,
+			//"serialNumber": null,
+			"configFiles": [
+				"C:/arm_tool/OpenOCD/xpack-openocd-0.11.0-3/scripts/interface/stlink.cfg",
+				"C:/arm_tool/OpenOCD/xpack-openocd-0.11.0-3/scripts/target/stm32h7x.cfg"
+			]
+		}
+	]
+}
