@@ -92,10 +92,10 @@ SECTIONS
     *(.RAM_D2_buf*)
   } > RAM_D2
 
-  .bufferss(NOLOAD) : {
+  /*.bufferss(NOLOAD) : {
     . = ALIGN(4);
     *(.RAM_D3_buf*)
-  } > RAM_D3
+  } > RAM_D3*/
 
   /* The startup code goes first into FLASH */
   .isr_vector :

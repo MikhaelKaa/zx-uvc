@@ -43,7 +43,7 @@ extern "C" {
 /* USER CODE BEGIN EC */
 #define RAM_D1 __attribute__ ((section(".RAM_D1_buf"), used)) 
 #define RAM_D2 __attribute__ ((section(".RAM_D2_buf"), used)) 
-
+#define RAM_D3 __attribute__ ((section(".RAM_D3_buf"), used)) 
 //#define UVC_USE_RGB888
 #define UVC_USE_RGB565
 //#define UVC_USE_RGB555
