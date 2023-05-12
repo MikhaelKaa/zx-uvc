@@ -1,0 +1,153 @@
+#! /usr/bin/env bash
+#
+# ┌──────────────────────────────────────────────────────────────────────────────────────┐
+# │                                                                                      │
+# │                                 configure                                            │
+# │                         * * * * * * * * * * * * *                                    │
+# │                                                                                      │
+# │ The 'configure' script makes it easy to discover and configure the build environment │
+# │                 software and provides a simple and consistent                        │
+# │             a way to build, compile and run with a set of simple commands            │
+# │                                                                                      │
+# └──────────────────────────────────────────────────────────────────────────────────────┘
+#
+# usage:
+#   $ ./configure 1.0
+#
+
+echo "-----------------------------------------------------------------------"
+echo " BLOCK-0: init"
+echo "-----------------------------------------------------------------------"
+
+arg_1=${1:-"0.0.1"} # regexp v1.0 -> 1.0
+
+var_use_version="${arg_1%.*}.$((${arg_1##*.}))";
+var_use_thread=${3:-"2"};
+var_use_docker=${4:-"docker"}       # than building podman or docker
+
+echo "use_version  : "$var_use_version;
+echo "use_unit_test: "$var_use_unit_test;
+echo "use_thread   : "$var_use_thread;
+
+echo "-----------------------------------------------------------------------"
+echo " BLOCK-1: Checking / installing packages"
+echo "-----------------------------------------------------------------------"
+
+# !!! access for apt
+if [ "$EUID" -ne 0 ]; then
+    echo "!!!"
+    echo "!!!  apt failed: PLEASE RUN AS ROOT"
+    echo "!!!"
+    #exit
+else
+
+    apt-get -y install binutils diffstat chrpath
+    apt-get -y install g++ gcc cpp
+    apt-get -y install bc nano mc build-essential autoconf libtool cmake pkg-config
+    apt-get -y install git python3  python3-distutils python-dev swig libpcre3-dev libnode-dev gawk wget diffstat
+    apt-get -y install bison flex device-tree-compiler libncurses5 libncurses5-dev
+    apt-get -y install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binfmt-support qemu-user-static
+    apt-get -y install dosfstools libssl-dev mtools
+    apt-get -y install rkflashtool
+
+    # Настройка локали
+    locale-gen "en_US.UTF-8"
+fi
+
+
+#
+# DETECT WSL2
+#
+if [[ -n "$IS_WSL" || -n "$WSL_DISTRO_NAME" ]]; then
+
+    echo -e "\nINFO: WSL\n"
+    #if type systemctl >/dev/null 2>/dev/null; then
+        #dockerd&
+    #fi
+
+else
+    echo -e "\nINFO: NATIVE LINUX\n"
+fi
+
+echo  "-----------------------------------------------------------------------"
+echo " BLOCK-2: Wrapper generation for Yocto"
+echo "-----------------------------------------------------------------------"
+
+cat << EOT > ./Makefile
+
+# auto-generated: $(date)
+
+.PHONY: banner
+.DEFAULT_GOAL:= banner
+.SILENT: build
+
+define HEADER
+
+⢀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⣠⣤⣶⣶
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⢰⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣀⣀⣾⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⡏⠉⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿
+⣿⣿⣿⣿⣿⣿⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠁⠀⣿
+⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀⠙⠿⠿⠿⠻⠿⠿⠟⠿⠛⠉⠀⠀⠀⠀⠀⣸⣿
+⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣴⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⢰⣹⡆⠀⠀⠀⠀⠀⠀⣭⣷⠀⠀⠀⠸⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠈⠉⠀⠀⠤⠄⠀⠀⠀⠉⠁⠀⠀⠀⠀⢿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⢾⣿⣷⠀⠀⠀⠀⡠⠤⢄⠀⠀⠀⠠⣿⣿⣷⠀⢸⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⡀⠉⠀⠀⠀⠀⠀⢄⠀⢀⠀⠀⠀⠀⠉⠉⠁⠀⠀⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿
+
+[yocto/wrapper]
+usage:
+  make init
+  make build
+  make image
+  make kconfig
+
+endef
+export HEADER
+export MAKEFLAGS=--no-print-directory
+
+init:
+	(exec ./scripts/yocto-setup.sh)
+build:
+	(exec ./scripts/yocto-build.sh)
+image:build
+	(exec ./scripts/yocto-image.sh "$PWD")
+kconfig:
+	(exec ./scripts/yocto-menuconfig.sh)
+clean:
+	(exec ./scripts/yocto-clean.sh)
+    
+help:banner
+	@LC_ALL=C make -pRrq -f \$(lastword \$(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|\$\$)/,/(^|\n)# Finished Make data base/ {if (\$\$1 !~ "^[#.]") {print "make ",\$\$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^\$@\$\$'
+
+#
+# INDOCK: build in docker
+#
+indock:
+	@echo action $(pwd) \$(filter-out \$@,\$(MAKECMDGOALS)) &&\
+	${var_use_docker} run -it --rm -w $(pwd) -v $(pwd):$(pwd) ${action:-"yocto/dunffel:last"} /bin/sh -c "./configure && make && exit"
+
+_upload:
+	@echo action $(pwd) \$(filter-out \$@,\$(MAKECMDGOALS)) &&\
+	scp ./deploy/*.img user@localhost:/tmp/
+
+gitsync:
+	@echo "dummy: gitsync"
+banner:
+	@echo "\$\${HEADER}"
+
+_init_:
+	@echo "dummy: _init_"
+
+# arg pass jammer
+%:;     # thanks to chakrit
+#@:;    # thanks to William Purse
+EOT
+
+# _MAIN_
+make gitsync
+make _init_
+make banner
