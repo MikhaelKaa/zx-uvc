@@ -26,35 +26,59 @@ void dcmi_resume(void) {
     printf("HAL_DCMI_Resume return %d\r\n", dcmi_ret);
 }
 
+void ptint_vs_pol(void){
+    if((hdcmi.Instance->CR>>DCMI_CR_VSPOL_Pos) & 1U){
+        //1: DCMI_VSYNC active high
+        printf("DCMI_VSYNC active high\r\n");
+    } else {
+        //0: DCMI_VSYNC active low
+        printf("DCMI_VSYNC active low\r\n");
+    }
+}
+
+void print_hs_pol(void) {
+    if((hdcmi.Instance->CR>>DCMI_CR_HSPOL_Pos) & 1U){
+        //1: DCMI_HSYNC active high
+        printf("DCMI_HSYNC active high\r\n");
+    } else {
+        //0: DCMI_HSYNC active low
+        printf("DCMI_HSYNC active low\r\n");
+    }
+}
+
+void print_pixclk(void) {
+    if((hdcmi.Instance->CR>>DCMI_CR_PCKPOL_Pos) & 1U)
+        //1: Rising edge active
+        printf("DCMI pixel clock Rising edge active\r\n");
+    else
+        //0: Falling edge active
+        printf("DCMI pixel clock Falling edge active\r\n");
+}
+
 void dcmi_toogle_VS_polarity(void) {
-    //0: DCMI_VSYNC active low
-    //1: DCMI_VSYNC active high
     hdcmi.Instance->CR ^=  DCMI_CR_VSPOL;
-    printf("DCMI Vertical sync polarity is %ld\r\n", (hdcmi.Instance->CR>>DCMI_CR_VSPOL_Pos) & 1U);
+    ptint_vs_pol();
 }
 
 void dcmi_toogle_HS_polarity(void) {
-    //0: DCMI_HSYNC active low
-    //1: DCMI_HSYNC active high
     hdcmi.Instance->CR ^=  DCMI_CR_HSPOL;
-    printf("DCMI Horizontal sync polarity is %ld\r\n", (hdcmi.Instance->CR>>DCMI_CR_HSPOL_Pos) & 1U);
+    print_hs_pol();
 }
 
 void dcmi_toogle_PIXCLK_edge(void) {
-    //0: Falling edge active
-    //1: Rising edge active
     hdcmi.Instance->CR ^=  DCMI_CR_PCKPOL;
-    //printf("DCMI pixel clock edge is %ld\r\n", (hdcmi.Instance->CR>>DCMI_CR_PCKPOL_Pos)&1);
-    if((hdcmi.Instance->CR>>DCMI_CR_PCKPOL_Pos) & 1U)
-        printf("1: Rising edge active\r\n");
-    else
-        printf("0: Falling edge active\r\n");
+    print_pixclk();
 }
 
+void print_all_param(void) {
+    ptint_vs_pol();
+    print_hs_pol();
+    print_pixclk();
+}
 
 void case_help(void) {
     printf("\r\n\
-        help message\r\n\
+        h - help message\r\n\
         z - start DCMI\r\n\
         x - stop DCMI\r\n\
         c - suspend DCMI\r\n\
@@ -62,6 +86,7 @@ void case_help(void) {
         b - toggle horizontal sync polaryty\r\n\
         n - toggle vertical sync polaryty\r\n\
         m - toggle pixel clock edge\r\n\
+        p - print all parameters\r\n\
         ");
 }
 
@@ -75,6 +100,7 @@ void dcmi_control(uint8_t cmd) {
     case 'b': dcmi_toogle_HS_polarity(); break;
     case 'n': dcmi_toogle_VS_polarity(); break;
     case 'm': dcmi_toogle_PIXCLK_edge(); break;
+    case 'p': print_all_param(); break;
     
     default: break;
   }
