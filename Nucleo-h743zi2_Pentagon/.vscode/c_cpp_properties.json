@@ -9,12 +9,7 @@
                 "C:/arm_tool/gcc/lib/**",
                 "${workspaceRoot}\\Drivers\\**",
                 "${workspaceRoot}\\Core\\Src\\**",
-                "${workspaceRoot}\\Core\\Inc\\**", /*,
-                "${workspaceFolder}/usb_uvc/Inc",
-                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
-                "${workspaceFolder}/app/GFX/inc",
-                "${workspaceFolder}/USB_DEVICE/App",
-                "${workspaceFolder}/USB_DEVICE/Target"*/
+                "${workspaceRoot}\\Core\\Inc\\**",
                 "${workspaceFolder}/USB_DEVICE/App",
                 "${workspaceFolder}/App/Retarget/inc",
                 "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
@@ -23,7 +18,9 @@
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
                 "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc",
                 "${workspaceFolder}/App/usb_uvc/Inc",
-                "${workspaceFolder}/Drivers/CMSIS/Core/Include"
+                "${workspaceFolder}/Drivers/CMSIS/Core/Include",
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/App/dcmi"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
@@ -31,8 +28,8 @@
                 "M7",
                 "GCC_ARMCM7"
             ],
-            "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
             "intelliSenseMode": "windows-gcc-arm"
         }
     ],

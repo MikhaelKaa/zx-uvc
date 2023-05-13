@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "retarget.h"
 #include <string.h>
+#include "dcmi_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -287,19 +288,23 @@ void console_key(uint8_t key) {
     default: break;
   }
 }
+
+void (*uart_rx_callback)(uint8_t) = dcmi_control;
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART3) {
-    console_key(rx[1]);
+    uart_rx_callback(rx[1]);
   }   
 }
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART3) {
-    console_key(rx[0]);
+    uart_rx_callback(rx[0]);
   }   
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -309,7 +314,7 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -349,8 +354,13 @@ int main(void)
   //terminal_init();
   //HAL_DCMI_ConfigCrop(&hdcmi, 64, 64, 256, 192);
   //HAL_DCMI_EnableCrop(&hdcmi);
-  int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf, sizeof(zx_buf)/4);
-  printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+
+
+  /*int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf, sizeof(zx_buf)/4);
+  printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);*/
+  void dcmi_start(void);
+  
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -382,10 +392,9 @@ int main(void)
       printf("uvc_wait_cnt = %d;\r\n\r\n", uvc_wait_cnt);
       settings_flag = 0;
     }
+    
     printf_flush();
-    //while(uvc_wait_flag == 0) {
-    //  __ASM("nop");
-    //}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

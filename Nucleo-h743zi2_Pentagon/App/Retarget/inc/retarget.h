@@ -1,6 +1,6 @@
 // Header: retarget
 // File Name: retarget.h
-// Author: Kargapolcev M. E.
+// Author: Mikhail Kaa
 // Date: 13.01.2020
 
 #ifndef RETARGET
