@@ -2,7 +2,7 @@
 
 Проект устройства для видео захвата экрана спектрум совместимых клонов.
 
-![Image](./doc/img/header-1.png)
+![Image](./doc/img/zs-scorpion.png)
 RGB -> DCMI -> STM32H7 -> USB UVC
 
 
