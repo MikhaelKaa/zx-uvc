@@ -4,11 +4,15 @@
 #include "dcmi.h"
 
 extern DCMI_HandleTypeDef hdcmi;
-extern /*__attribute__ ((section(".RAM_D2_buf"), used))*/ uint8_t zx_buf[2][ZX_V][ZX_H];
 uint16_t test_offset = 0;
 
-void dcmi_start(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf, (sizeof(zx_buf)/4) - test_offset);
+void dcmi_start_gmx_sc(void) {
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
+    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+}
+
+void dcmi_start_gmx_pent(void) {
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_pent, (sizeof(zx_buf_gmx_pent)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
@@ -76,6 +80,8 @@ void print_all_param(void) {
     print_vs_pol();
     print_hs_pol();
     print_pixclk();
+    printf("offset x = %d\r\n", offset_x);
+    printf("offset y = %d\r\n", offset_y);
 }
 
 void inc_test_offset(void) {
@@ -88,17 +94,33 @@ void dec_test_offset(void) {
     printf("dec test offset. TO = %d\r\n", test_offset);
 }
 
-void load_gmx_set(void) {
-    printf("Load GMX settings\r\n");
+void load_gmx_scorpion_set(void) {
+    dcmi_stop();
+    copy_pixels = zx_copy_pix_gmx_sc;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+    offset_x = 42;
+    offset_y = 88;
+    printf("Load GMX Scorpion settings\r\n");
+    dcmi_start_gmx_sc();
+}
+
+void load_gmx_pentagon_set(void) {
+    dcmi_stop();
+    copy_pixels = zx_copy_pix_gmx_pent;
+    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+    offset_x = 40;
+    offset_y = 88;
+    printf("Load GMX Pentagon settings\r\n");
+    dcmi_start_gmx_pent();
 }
 
 void case_help(void) {
     printf("\r\n\
         h - help message\r\n\
-        z - start DCMI\r\n\
         x - stop DCMI\r\n\
         c - suspend DCMI\r\n\
         v - resume DCMI\r\n\
@@ -108,14 +130,14 @@ void case_help(void) {
         p - print all parameters\r\n\
         q - inc test offset\r\n\
         a - dec test offset\r\n\
-        1 - load GMX settings\r\n\
+        1 - load GMX Scorpion settings\r\n\
+        2 - load GMX Pentagon settings\r\n\
         ");
 }
 
 void dcmi_control(uint8_t cmd) {
     switch (cmd) {
     case 'h': case_help(); break;
-    case 'z': dcmi_start(); break;
     case 'x': dcmi_stop(); break;
     case 'c': dcmi_suspend(); break;
     case 'v': dcmi_resume(); break;
@@ -125,7 +147,8 @@ void dcmi_control(uint8_t cmd) {
     case 'p': print_all_param(); break;
     case 'q': inc_test_offset(); break;
     case 'a': dec_test_offset(); break;
-    case '1': load_gmx_set(); break;
+    case '1': load_gmx_scorpion_set(); break;
+    case '2': load_gmx_pentagon_set(); break;
     case 'w': offset_x++; break;
     case 's': offset_x--; break;
     case 'e': offset_y++; break;

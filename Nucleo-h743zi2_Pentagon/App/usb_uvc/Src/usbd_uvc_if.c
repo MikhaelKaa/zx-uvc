@@ -19,8 +19,7 @@ void Camera_On(void){}
 void Camera_Off(void){}
 
 void Camera_FreeFrame(uint8_t *frame){}
-int wait_cnt = 0;
-int uvc_wait_cnt = 14000;
+
 uint8_t *Camera_GetFrame(uint32_t *pFrameLength)
 {
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);

@@ -22,6 +22,8 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "retarget.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +65,12 @@ extern DMA_HandleTypeDef hdma_usart3_tx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern UART_HandleTypeDef huart3;
 /* USER CODE BEGIN EV */
-
+void delay_dummy(void);
+void delay_dummy(void) {
+  for(int n = 0; n != 10000; n++) {
+    asm("nop");
+  }
+}
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -95,6 +102,10 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+    printf("HardFault_Handler\r\n");
+    delay_dummy();
+    printf_flush();
+    delay_dummy();
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
@@ -110,6 +121,10 @@ void MemManage_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
+    printf("MemManage_Handler\r\n");
+    delay_dummy();
+    printf_flush();
+    delay_dummy();
     /* USER CODE END W1_MemoryManagement_IRQn 0 */
   }
 }
@@ -125,6 +140,10 @@ void BusFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_BusFault_IRQn 0 */
+    printf("BusFault_Handler\r\n");
+    delay_dummy();
+    printf_flush();
+    delay_dummy();
     /* USER CODE END W1_BusFault_IRQn 0 */
   }
 }
@@ -140,6 +159,10 @@ void UsageFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
+    printf("UsageFault_Handler\r\n");
+    delay_dummy();
+    printf_flush();
+    delay_dummy();
     /* USER CODE END W1_UsageFault_IRQn 0 */
   }
 }

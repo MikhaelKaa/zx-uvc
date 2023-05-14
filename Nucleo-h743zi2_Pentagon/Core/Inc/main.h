@@ -44,79 +44,32 @@ extern "C" {
 #define RAM_D1 __attribute__ ((section(".RAM_D1_buf"), used)) 
 #define RAM_D2 __attribute__ ((section(".RAM_D2_buf"), used)) 
 #define RAM_D3 __attribute__ ((section(".RAM_D3_buf"), used)) 
-//#define UVC_USE_RGB888
+
 #define UVC_USE_RGB565
-//#define UVC_USE_RGB555
 
-//int zx_h = (448U);
-//int zx_v = (320U);
 
-void zx_copy_pix(void);
-void zx_copy_pix_test(void);
+#pragma pack(push, 1)
+extern uint8_t zx_buf_gmx_sc[296][432];
+extern uint8_t zx_buf_gmx_pent[296+8][432];
+#pragma pack(pop)
+
+void zx_copy_pix_gmx_sc(void);
+void zx_copy_pix_gmx_pent(void);
+
 uint8_t UVC_flag;
 int offset_x, offset_y;
 void (*copy_pixels)(void);
 
-// Ширина экрана пентагона полная.
-#define PENT_H (448U)
-// Высота экрана пентагона полная.
-#define PENT_V (320U)
-// Кадровый импульс экрана пентагона.
-//#define PENT_HS (32U)
-#define PENT_HS (32U-16U)
-// Строчный импульс экрана пентагона.
-#define PENT_VS (16U+8U)
-//#define PENT_VS (16U)
-
-// Обрежем кадр до 320x240
-#define PENT_HCrop (96U)
-#define PENT_VCrop (64U)
-
-
-#define ZX_H (PENT_H-PENT_HS)
-#define ZX_V (PENT_V-PENT_VS)
-
-#define ZX_BORDER 1
-
-#if ZX_BORDER == 1
-//#define ZX_PIX(x, y) (zx_buf[x][y+16])
-#define ZX_PIX(x, y) (zx_buf[(p+1)%2][x+40][y+72])
-//#define UVC_VIDEO_WIDTH        (ZX_H-PENT_HCrop)
+#ifdef UVC_USE_RGB565
 #define UVC_VIDEO_WIDTH        (320U)
 //#define UVC_VIDEO_HEIGHT      (ZX_V-PENT_VCrop)
 #define UVC_VIDEO_HEIGHT      (240U) 
-#endif
-
-#if ZX_BORDER == 0
-//#define ZX_PIX(x, y) (zx_buf[p][x+64][y+104])
-#define ZX_PIX(x, y) (zx_buf[p][x][y])
-#define UVC_VIDEO_WIDTH        256
-#define UVC_VIDEO_HEIGHT       192
-#endif
-
-#ifdef UVC_USE_RGB555
 #define UVC_BYTE_PER_PIX (2U)
 extern uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
 
-#ifdef UVC_USE_RGB565
-#define UVC_BYTE_PER_PIX (2U)
-extern uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
-#endif
+uint8_t DCMI_flag;
 
-#ifdef UVC_USE_RGB888
-#define UVC_BYTE_PER_PIX (3U)
-typedef struct {
-  uint8_t b;
-  uint8_t g;
-  uint8_t r;
-} pixel888_t;
-extern pixel888_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
-#endif
-
-//extern uint8_t zx_buf[2][ZX_V][ZX_H];
-uint8_t uvc_wait_flag;
-extern int uvc_wait_cnt;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
