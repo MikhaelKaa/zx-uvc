@@ -1,3 +1,5 @@
 #! /usr/bin/env bash
 
-### Вызов сборки Сборка
+### Вызов сборки.
+cd Nucleo-h743zi2_Pentagon/
+make -j2
