@@ -60,7 +60,8 @@ __attribute__ ((section(".RAM_D1_buf"), used)) uint16_t ucv_buf[UVC_VIDEO_HEIGHT
 #ifdef UVC_USE_RGB888
 __attribute__ ((section(".RAM_D1_buf"), used)) pixel888_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
-
+//int PENT_H = (448U);
+//int PENT_V = (320U);
 static volatile int p = 0;
 __attribute__ ((section(".RAM_D2_buf"), used)) uint8_t zx_buf[2][ZX_V][ZX_H];
 

@@ -5,9 +5,10 @@
 
 extern DCMI_HandleTypeDef hdcmi;
 extern /*__attribute__ ((section(".RAM_D2_buf"), used))*/ uint8_t zx_buf[2][ZX_V][ZX_H];
+uint16_t test_offset = 0;
 
 void dcmi_start(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf, sizeof(zx_buf)/4);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf, (sizeof(zx_buf)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
@@ -26,7 +27,7 @@ void dcmi_resume(void) {
     printf("HAL_DCMI_Resume return %d\r\n", dcmi_ret);
 }
 
-void ptint_vs_pol(void){
+void print_vs_pol(void){
     if((hdcmi.Instance->CR>>DCMI_CR_VSPOL_Pos) & 1U){
         //1: DCMI_VSYNC active high
         printf("DCMI_VSYNC active high\r\n");
@@ -57,7 +58,7 @@ void print_pixclk(void) {
 
 void dcmi_toogle_VS_polarity(void) {
     hdcmi.Instance->CR ^=  DCMI_CR_VSPOL;
-    ptint_vs_pol();
+    print_vs_pol();
 }
 
 void dcmi_toogle_HS_polarity(void) {
@@ -71,10 +72,22 @@ void dcmi_toogle_PIXCLK_edge(void) {
 }
 
 void print_all_param(void) {
-    ptint_vs_pol();
+    printf("\r\n***************\r\n");
+    print_vs_pol();
     print_hs_pol();
     print_pixclk();
 }
+
+void inc_test_offset(void) {
+    test_offset++;
+    printf("inc test offset. TO = %d\r\n", test_offset);
+}
+
+void dec_test_offset(void) {
+    test_offset--;
+    printf("dec test offset. TO = %d\r\n", test_offset);
+}
+
 
 void case_help(void) {
     printf("\r\n\
@@ -87,6 +100,8 @@ void case_help(void) {
         n - toggle vertical sync polaryty\r\n\
         m - toggle pixel clock edge\r\n\
         p - print all parameters\r\n\
+        q - inc test offset\r\n\
+        a - dec test offset\r\n\
         ");
 }
 
@@ -101,7 +116,8 @@ void dcmi_control(uint8_t cmd) {
     case 'n': dcmi_toogle_VS_polarity(); break;
     case 'm': dcmi_toogle_PIXCLK_edge(); break;
     case 'p': print_all_param(); break;
-    
+    case 'q': inc_test_offset(); break;
+    case 'a': dec_test_offset(); break;
     default: break;
   }
 }

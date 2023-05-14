@@ -48,6 +48,9 @@ extern "C" {
 #define UVC_USE_RGB565
 //#define UVC_USE_RGB555
 
+//int zx_h = (448U);
+//int zx_v = (320U);
+
 // Ширина экрана пентагона полная.
 #define PENT_H (448U)
 // Высота экрана пентагона полная.
@@ -70,8 +73,10 @@ extern "C" {
 #if ZX_BORDER == 1
 //#define ZX_PIX(x, y) (zx_buf[x][y+16])
 #define ZX_PIX(x, y) (zx_buf[(p+1)%2][x+40][y+72])
-#define UVC_VIDEO_WIDTH        (ZX_H-PENT_HCrop)
-#define UVC_VIDEO_HEIGHT       (ZX_V-PENT_VCrop)
+//#define UVC_VIDEO_WIDTH        (ZX_H-PENT_HCrop)
+#define UVC_VIDEO_WIDTH        (320U)
+//#define UVC_VIDEO_HEIGHT      (ZX_V-PENT_VCrop)
+#define UVC_VIDEO_HEIGHT      (240U) 
 #endif
 
 #if ZX_BORDER == 0

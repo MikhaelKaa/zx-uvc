@@ -9,3 +9,8 @@ Nucleo-h743zi2/build/nuc-h7-uvc.bin
 *.d
 *.lst
 /Makefile
+*.bin
+*.elf
+*.hex
+*.map
+*.map
