@@ -51,14 +51,22 @@ extern "C" {
 //int zx_h = (448U);
 //int zx_v = (320U);
 
+void zx_copy_pix(void);
+void zx_copy_pix_test(void);
+uint8_t UVC_flag;
+int offset_x, offset_y;
+void (*copy_pixels)(void);
+
 // Ширина экрана пентагона полная.
 #define PENT_H (448U)
 // Высота экрана пентагона полная.
 #define PENT_V (320U)
 // Кадровый импульс экрана пентагона.
-#define PENT_HS (32U)
+//#define PENT_HS (32U)
+#define PENT_HS (32U-16U)
 // Строчный импульс экрана пентагона.
-#define PENT_VS (16U)
+#define PENT_VS (16U+8U)
+//#define PENT_VS (16U)
 
 // Обрежем кадр до 320x240
 #define PENT_HCrop (96U)

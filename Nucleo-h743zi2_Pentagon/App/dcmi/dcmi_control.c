@@ -88,6 +88,12 @@ void dec_test_offset(void) {
     printf("dec test offset. TO = %d\r\n", test_offset);
 }
 
+void load_gmx_set(void) {
+    printf("Load GMX settings\r\n");
+    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+}
 
 void case_help(void) {
     printf("\r\n\
@@ -102,6 +108,7 @@ void case_help(void) {
         p - print all parameters\r\n\
         q - inc test offset\r\n\
         a - dec test offset\r\n\
+        1 - load GMX settings\r\n\
         ");
 }
 
@@ -118,6 +125,12 @@ void dcmi_control(uint8_t cmd) {
     case 'p': print_all_param(); break;
     case 'q': inc_test_offset(); break;
     case 'a': dec_test_offset(); break;
+    case '1': load_gmx_set(); break;
+    case 'w': offset_x++; break;
+    case 's': offset_x--; break;
+    case 'e': offset_y++; break;
+    case 'd': offset_y--; break;
+    
     default: break;
   }
 }

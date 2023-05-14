@@ -49,6 +49,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+void (*copy_pixels)(void) = zx_copy_pix_test;
+int offset_x = 40, offset_y = 72;
 #ifdef UVC_USE_RGB555
 __attribute__ ((section(".RAM_D1_buf"), used)) uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
@@ -63,7 +65,7 @@ __attribute__ ((section(".RAM_D1_buf"), used)) pixel888_t ucv_buf[UVC_VIDEO_HEIG
 //int PENT_H = (448U);
 //int PENT_V = (320U);
 static volatile int p = 0;
-__attribute__ ((section(".RAM_D2_buf"), used)) uint8_t zx_buf[2][ZX_V][ZX_H];
+__attribute__ ((section(".RAM_D2_buf"), used)) uint8_t zx_buf[1][ZX_V][ZX_H];
 
 /* USER CODE END PV */
 
@@ -78,12 +80,14 @@ void SystemClock_Config(void);
 void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
   uvc_wait_flag = 1;
   HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
-  //p++;
-  if(p++ >= 2U) p = 0U;
+  //if(p++ >= 2U) p = 0U;
+  UVC_flag = 0;
 }
+
 void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
 
 }
+
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
   
 }
@@ -175,6 +179,15 @@ void zx_copy_pix(void)
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
       //ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[(ZX_PIX(j, k) & 0b00001111)]; // & 0b00001111 <- нужно, если старщие биты "висят в воздухе".
       ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[ZX_PIX(j, k)];
+    }
+  }
+}
+
+void zx_copy_pix_test(void)
+{
+  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
+    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
+      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf[(p+1)%2][j+offset_x][k+offset_y]];
     }
   }
 }
@@ -369,7 +382,8 @@ int main(void)
   while (1)
   {
     if(uvc_wait_flag) {
-      zx_copy_pix();
+      copy_pixels();
+      UVC_flag = 1;
       uvc_wait_flag = 0;
     }
 
