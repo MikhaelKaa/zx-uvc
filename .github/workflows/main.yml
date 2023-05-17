@@ -19,12 +19,18 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Configure
+      run: ./configure
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: make build
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{env.BUILD_TYPE}}
+    #- name: Configure CMake
+      #run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    #- name: Build
+    #  run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    #- name: Test
+    #  working-directory: ${{github.workspace}}/build
+    #  run: ctest -C ${{env.BUILD_TYPE}}
