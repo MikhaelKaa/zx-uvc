@@ -1,5 +1,7 @@
 #include "usbd_uvc_if.h"
 
+uint8_t UVC_flag;
+
 void Camera_On(void);
 void Camera_Off(void);
 uint8_t *Camera_GetFrame(uint32_t *pFrameLength);

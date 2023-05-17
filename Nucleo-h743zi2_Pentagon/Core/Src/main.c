@@ -50,7 +50,7 @@
 
 /* USER CODE BEGIN PV */
 void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
-int offset_x = 40, offset_y = 72;
+
 
 #ifdef UVC_USE_RGB565
 RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
@@ -156,6 +156,9 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+    offset_x = 40;
+    offset_y = 72;
   
   /* USER CODE END 1 */
 
