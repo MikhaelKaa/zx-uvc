@@ -23,7 +23,7 @@ jobs:
       run: sudo ./configure
 
     - name: Build
-      run: make build
+      run: make build && ls -lah
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
