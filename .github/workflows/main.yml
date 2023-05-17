@@ -25,6 +25,12 @@ jobs:
     - name: Build
       run: make build
 
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build
+        path: build/nuc-h7-uvc.bin
+
     #- name: Configure CMake
       #run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
