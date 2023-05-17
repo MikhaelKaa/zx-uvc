@@ -4,7 +4,12 @@
 #include "dcmi.h"
 
 extern DCMI_HandleTypeDef hdcmi;
+uint8_t DCMI_flag;
+
+
 uint16_t test_offset = 0;
+int offset_x;
+int  offset_y;
 
 void dcmi_start_gmx_sc(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);

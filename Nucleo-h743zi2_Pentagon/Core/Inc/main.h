@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+#pragma once
 #ifndef __MAIN_H
 #define __MAIN_H
 
@@ -56,9 +57,10 @@ extern uint8_t zx_buf_gmx_pent[296+8][432];
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
 
-uint8_t UVC_flag;
-int offset_x, offset_y;
-void (*copy_pixels)(void);
+extern uint8_t UVC_flag;
+extern int offset_x;
+extern int  offset_y;
+extern void (*copy_pixels)(void);
 
 #ifdef UVC_USE_RGB565
 #define UVC_VIDEO_WIDTH        (320U)
@@ -68,7 +70,7 @@ void (*copy_pixels)(void);
 extern uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
 
-uint8_t DCMI_flag;
+extern uint8_t DCMI_flag;
 
 /* USER CODE END EC */
 
