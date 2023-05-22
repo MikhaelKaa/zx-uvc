@@ -186,6 +186,8 @@ int main(void)
   MX_DCMI_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+
+
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_SET);
   HAL_Delay(10);
@@ -198,6 +200,23 @@ int main(void)
   init_pix_table();
   printf("zx uvc start\r\n");
 
+    //
+    // ZX_CAPTURE - library
+    //
+    ZX_CAPTURE_IfTypeDef        _zx_interface;
+    ZX_CAPTURE_HandleTypDef     _zx_handle;
+
+    _zx_interface.ZXCAPTURE_IF_DelayMs          = func;
+    _zx_interface.ZXCAPTURE_IF_GPIO_ResetPin    = func;
+    _zx_interface.ZXCAPTURE_IF_WritePin         = func;
+    _zx_interface.ZXCAPTURE_IF_GetTickMs        = func;
+    _zx_interface.ZXCAPTURE_IF_Receive          = func;
+    _zx_interface.ZXCAPTURE_IF_Transmit         = func;
+
+    ZX_CAPTURE_init(&_zx_handle, _zx_interface,1) ;
+    //
+    //
+    //
   /* USER CODE END 2 */
 
   /* Infinite loop */
