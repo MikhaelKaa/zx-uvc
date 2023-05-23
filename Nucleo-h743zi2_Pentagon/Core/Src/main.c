@@ -219,21 +219,23 @@ int main(void)
     //
   /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    if(DCMI_flag) {
-      copy_pixels();
-      UVC_flag = 1;
-      DCMI_flag = 0;
-    }
-    printf_flush();
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+    while (1)
+    {
+        ZX_CAPTURE_process();
+        if(DCMI_flag) 
+        {
+            copy_pixels();
+            UVC_flag = 1;
+            DCMI_flag = 0;
+        }
+        printf_flush();
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+    }
   /* USER CODE END 3 */
 }
 
