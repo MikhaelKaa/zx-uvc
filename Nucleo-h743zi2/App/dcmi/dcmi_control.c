@@ -11,6 +11,7 @@ uint16_t test_offset = 0;
 int offset_x;
 int  offset_y;
 
+
 void dcmi_start_gmx_sc(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
@@ -19,6 +20,12 @@ void dcmi_start_gmx_sc(void) {
 void dcmi_start_gmx_pent(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_pent, (sizeof(zx_buf_gmx_pent)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+}
+
+void dcmi_start(void) {  
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
+    printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
+    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
 }
 
 void dcmi_stop(void) {  
@@ -143,6 +150,7 @@ void case_help(void) {
 void dcmi_control(uint8_t cmd) {
     switch (cmd) {
     case 'h': case_help(); break;
+    case 'z': dcmi_start(); break;
     case 'x': dcmi_stop(); break;
     case 'c': dcmi_suspend(); break;
     case 'v': dcmi_resume(); break;
