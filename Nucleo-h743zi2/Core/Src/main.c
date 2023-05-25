@@ -76,12 +76,12 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
 }
 
 void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
-
+ 
 }
 
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
   DCMI_flag = 1;
-  HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
+  //HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
   UVC_flag = 0;
   
 }
@@ -89,29 +89,32 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
   //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 }
 
+// Таблица соответствия пикселся спектрума (RGBI) пикселю RGB565.
 __attribute__ ((section(".DTCMRAM_buf"), used)) uint16_t zx_pix_tab[16];
-uint8_t  pix_i;
-uint16_t pix_r;
-uint16_t pix_g;
-uint16_t pix_b;
-uint8_t pal_r = 15;
-uint8_t pal_g = 30;
-uint8_t pal_b = 15;
-uint8_t pal_ir = 15;
-uint8_t pal_ig = 30;
-uint8_t pal_ib = 15;
 
 void init_pix_table(void)
 {
+  uint8_t  pix_i;
+  uint16_t pix_r;
+  uint16_t pix_g;
+  uint16_t pix_b;
+  uint8_t palette_R = 15;
+  uint8_t palette_G = 30;
+  uint8_t palette_B = 15;
+  uint8_t palette_IR = 15;
+  uint8_t palette_IG = 30;
+  uint8_t palette_IB = 15;
+
   for(int n = 0; n < 16; n++) {
     pix_i = (n & 0b00001000)?(1U):(0);
-    pix_r = (n & 0b00000001)?(pal_r + pal_ir * pix_i):(0);
-    pix_g = (n & 0b00000010)?(pal_g + pal_ig * pix_i):(0);
-    pix_b = (n & 0b00000100)?(pal_b + pal_ib * pix_i):(0);
+    pix_r = (n & 0b00000001)?(palette_R + palette_IR * pix_i):(0);
+    pix_g = (n & 0b00000010)?(palette_G + palette_IG * pix_i):(0);
+    pix_b = (n & 0b00000100)?(palette_B + palette_IB * pix_i):(0);
     zx_pix_tab[n] = (pix_b<<0) | (pix_g<<5) | (pix_r<<11);
   }
 }
 
+// time ~7.7ms @480MHz (stm32h743, gcc -O3)
 void zx_copy_pix_gmx_sc(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
@@ -121,6 +124,7 @@ void zx_copy_pix_gmx_sc(void)
   }
 }
 
+// time ~3.9ms @480MHz (stm32h743, gcc -O3)
 void zx_copy_pix_gmx_pent(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
@@ -205,7 +209,9 @@ int main(void)
   while (1)
   {
     if(DCMI_flag) {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
       copy_pixels();
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
       UVC_flag = 1;
       DCMI_flag = 0;
     }
