@@ -13,7 +13,8 @@
 #define _ZX_CAPTURE_STATUS_H_
 
 
-typedef enum {
+typedef enum 
+{
     ZX_CAPTURE_OK = 0,
     ZX_CAPTURE_ERROR,
     ZX_CAPTURE_TIMEOUT,

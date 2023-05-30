@@ -1,0 +1,33 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "[!N]*/**": true,
+        "N[!u]*/**": true,
+        "Nu[!c]*/**": true,
+        "Nuc[!l]*/**": true,
+        "Nucl[!e]*/**": true,
+        "Nucle[!o]*/**": true,
+        "Nucleo[!-]*/**": true,
+        "Nucleo-[!h]*/**": true,
+        "Nucleo-h[!7]*/**": true,
+        "Nucleo-h7[!4]*/**": true,
+        "Nucleo-h74[!3]*/**": true,
+        "Nucleo-h743[!z]*/**": true,
+        "Nucleo-h743z[!i]*/**": true,
+        "Nucleo-h743zi[!2]*/**": true,
+        "Nucleo-h743zi2[!_]*/**": true,
+        "Nucleo-h743zi2_[!P]*/**": true,
+        "Nucleo-h743zi2_P[!e]*/**": true,
+        "Nucleo-h743zi2_Pe[!n]*/**": true,
+        "Nucleo-h743zi2_Pen[!t]*/**": true,
+        "Nucleo-h743zi2_Pent[!a]*/**": true,
+        "Nucleo-h743zi2_Penta[!g]*/**": true,
+        "Nucleo-h743zi2_Pentag[!o]*/**": true,
+        "Nucleo-h743zi2_Pentago[!n]*/**": true
+    }
+}

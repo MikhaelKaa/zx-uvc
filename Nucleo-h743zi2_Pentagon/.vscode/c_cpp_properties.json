@@ -2,7 +2,7 @@
     "configurations": [
         {
             "name": "arm_c_cpp_properties",
-            "compilerPath": "C:/Developer/GCC/ARM/6.3.1/bin/arm-none-eabi-gcc.exe",
+            "compilerPath": "C:\Developer\GCC\ARM\6.3.1\bin\arm-none-eabi-gcc.exe",
             "includePath": [
                 "C:/Developer/GCC/ARM/6.3.1/arm-none-eabi/include",
                 "C:/Developer/GCC/ARM/6.3.1/arm-none-eabi/include/sys/",
@@ -20,7 +20,9 @@
                 "${workspaceFolder}/App/usb_uvc/Inc",
                 "${workspaceFolder}/Drivers/CMSIS/Core/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/App/dcmi"
+                "${workspaceFolder}/App/dcmi",
+                "${workspaceFolder}/App/ZXCapture/inc"
+
             ],
             "defines": [
                 "USE_HAL_DRIVER",

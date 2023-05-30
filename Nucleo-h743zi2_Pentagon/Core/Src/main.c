@@ -27,11 +27,16 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "retarget.h"
-#include <string.h>
-#include "dcmi_control.h"
-/* USER CODE END Includes */
 
+
+#include <string.h>
+#include "retarget.h"
+#include "dcmi_control.h"
+
+#include "ZXCapture.h"
+
+
+/* USER CODE END Includes */
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -49,8 +54,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
 
+
+void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
 
 #ifdef UVC_USE_RGB565
 RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
@@ -62,6 +68,8 @@ RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 RAM_D2 uint8_t zx_buf_gmx_sc[296][432];
 RAM_D2 uint8_t zx_buf_gmx_pent[304][432];
 #pragma pack(pop)
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,6 +80,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
 void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
 }
 
@@ -89,7 +99,9 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
   //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 }
 
+
 __attribute__ ((section(".DTCMRAM_buf"), used)) uint16_t zx_pix_tab[16];
+
 uint8_t  pix_i;
 uint16_t pix_r;
 uint16_t pix_g;
@@ -203,34 +215,29 @@ int main(void)
     //
     // ZX_CAPTURE - library
     //
-    ZX_CAPTURE_IfTypeDef        _zx_interface;
-    ZX_CAPTURE_HandleTypDef     _zx_handle;
+//    ZX_CAPTURE_HandleTypDef     _zx_handle;
+//    ZX_CAPTURE_IfTypeDef        _zx_interface;
+//
+//    _zx_interface.ZXCAPTURE_IF_GPIO_ResetPin    = NULL;
+//    _zx_interface.ZXCAPTURE_IF_GPIO_WritePin    = NULL;
+//    _zx_interface.ZXCAPTURE_IF_DelayMs          = NULL;
+//    _zx_interface.ZXCAPTURE_IF_GetTickMs        = NULL;
+//    _zx_interface.ZXCAPTURE_IF_Receive          = NULL;
+//    _zx_interface.ZXCAPTURE_IF_Transmit         = NULL;
+//
+//    ZX_CAPTURE_init(&_zx_handle, _zx_interface,1) ;
+    
+    //
+    //
+    //
 
-    _zx_interface.ZXCAPTURE_IF_DelayMs          = func;
-    _zx_interface.ZXCAPTURE_IF_GPIO_ResetPin    = func;
-    _zx_interface.ZXCAPTURE_IF_WritePin         = func;
-    _zx_interface.ZXCAPTURE_IF_GetTickMs        = func;
-    _zx_interface.ZXCAPTURE_IF_Receive          = func;
-    _zx_interface.ZXCAPTURE_IF_Transmit         = func;
-
-    ZX_CAPTURE_init(&_zx_handle, _zx_interface,1) ;
-    //
-    //
-    //
   /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1)
     {
-        ZX_CAPTURE_process();
-        if(DCMI_flag) 
-        {
-            copy_pixels();
-            UVC_flag = 1;
-            DCMI_flag = 0;
-        }
-        printf_flush();
+        //ZXCAPTURE_process(&_zx_handle);
 
     /* USER CODE END WHILE */
 

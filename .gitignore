@@ -14,3 +14,4 @@ Nucleo-h743zi2/build/nuc-h7-uvc.bin
 *.hex
 *.map
 *.map
+/doc/*.dtmp

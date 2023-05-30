@@ -14,12 +14,11 @@
 
 #include <inttypes.h>
 
-
 typedef struct ZXCapture_HandleStruct 
 {
     void* drv_handle;
     uint8_t is_dual_ring;
 
-}ZXCapture_HandleTypeDef;
+} ZXCapture_HandleTypeDef;
 
 #endif
