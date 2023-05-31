@@ -51,7 +51,7 @@ extern "C" {
 
 #pragma pack(push, 1)
 extern uint8_t zx_buf_gmx_sc[296][432];
-extern uint8_t zx_buf_gmx_pent[296+8][432];
+extern uint8_t zx_buf_gmx_pent[304][432];
 #pragma pack(pop)
 
 void zx_copy_pix_gmx_sc(void);

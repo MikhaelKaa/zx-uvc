@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "dcmi.h"
 
+void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
+
 // gmx-scorpion 296x432
 // gmx-pentagon 304x432
 #pragma pack(push, 1)

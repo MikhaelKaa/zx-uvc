@@ -1,5 +1,9 @@
 #include "usbd_uvc_if.h"
 
+#ifdef UVC_USE_RGB565
+RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
+#endif
+
 uint8_t UVC_flag;
 
 void Camera_On(void);

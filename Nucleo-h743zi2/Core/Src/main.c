@@ -51,13 +51,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
-
-
-#ifdef UVC_USE_RGB565
-RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
-#endif
-
 
 /* USER CODE END PV */
 
