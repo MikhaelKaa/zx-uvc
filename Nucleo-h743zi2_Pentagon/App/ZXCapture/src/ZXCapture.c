@@ -8,9 +8,9 @@
  * - VasilievS [imp.cepera@gmail.com]
  * - Kaa [@gmail.com]
  */
+#include "main.h"
 
-
-void ZXCAPTURE_process(&_zx_handle)
+void ZXCAPTURE_process(_zx_handle)
 {
         if(DCMI_flag) 
         {

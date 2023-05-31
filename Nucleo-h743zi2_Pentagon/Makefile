@@ -85,6 +85,7 @@ Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c
 C_SOURCES 	+= $(wildcard App/Retarget/*.c)
 C_SOURCES 	+= $(wildcard App/Terminal/src/*.c)
 C_SOURCES 	+= $(wildcard App/dcmi/*.c)
+C_SOURCES 	+= $(wildcard App/ZXCapture/src/*.c)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -157,6 +158,7 @@ C_INCLUDES += -IApp/Retarget/inc
 C_INCLUDES += -IApp/usb_uvc/Inc
 C_INCLUDES += -IApp/Terminal/inc
 C_INCLUDES += -IApp/dcmi
+C_INCLUDES += -IApp/ZXCapture/inc
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
