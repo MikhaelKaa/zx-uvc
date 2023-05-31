@@ -20,7 +20,8 @@
                 "${workspaceFolder}/App/usb_uvc/Inc",
                 "${workspaceFolder}/Drivers/CMSIS/Core/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/App/dcmi"
+                "${workspaceFolder}/App/dcmi",
+                "${workspaceFolder}/App/zx_capture"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

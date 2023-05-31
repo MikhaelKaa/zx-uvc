@@ -30,6 +30,8 @@
 #include "retarget.h"
 #include <string.h>
 #include "dcmi_control.h"
+#include "zx_capture.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,12 +58,7 @@ void (*copy_pixels)(void) = zx_copy_pix_gmx_sc;
 RAM_D1 uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
 
-// gmx-scorpion 296x432
-// gmx-pentagon 304x432
-#pragma pack(push, 1)
-RAM_D2 uint8_t zx_buf_gmx_sc[296][432];
-RAM_D2 uint8_t zx_buf_gmx_pent[304][432];
-#pragma pack(pop)
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,67 +69,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
-}
 
-void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
- 
-}
-
-void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
-  DCMI_flag = 1;
-  //HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
-  UVC_flag = 0;
-  
-}
-void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
-  //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-}
-
-// Таблица соответствия пикселся спектрума (RGBI) пикселю RGB565.
-__attribute__ ((section(".DTCMRAM_buf"), used)) uint16_t zx_pix_tab[16];
-
-void init_pix_table(void)
-{
-  uint8_t  pix_i;
-  uint16_t pix_r;
-  uint16_t pix_g;
-  uint16_t pix_b;
-  uint8_t palette_R = 15;
-  uint8_t palette_G = 30;
-  uint8_t palette_B = 15;
-  uint8_t palette_IR = 15;
-  uint8_t palette_IG = 30;
-  uint8_t palette_IB = 15;
-
-  for(int n = 0; n < 16; n++) {
-    pix_i = (n & 0b00001000)?(1U):(0);
-    pix_r = (n & 0b00000001)?(palette_R + palette_IR * pix_i):(0);
-    pix_g = (n & 0b00000010)?(palette_G + palette_IG * pix_i):(0);
-    pix_b = (n & 0b00000100)?(palette_B + palette_IB * pix_i):(0);
-    zx_pix_tab[n] = (pix_b<<0) | (pix_g<<5) | (pix_r<<11);
-  }
-}
-
-// time ~7.7ms @480MHz (stm32h743, gcc -O3)
-void zx_copy_pix_gmx_sc(void)
-{
-  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
-    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_gmx_sc[j+42][k+88]];
-    }
-  }
-}
-
-// time ~3.9ms @480MHz (stm32h743, gcc -O3)
-void zx_copy_pix_gmx_pent(void)
-{
-  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
-    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_gmx_pent[j+42][k+88]];
-    }
-  }
-}
 
 RAM_D1 uint8_t rx[2] = {0, 0};
 void (*uart_rx_callback)(uint8_t) = dcmi_control;
@@ -190,12 +127,15 @@ int main(void)
   MX_DCMI_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+  // Моргнем светиком и сбросим физику ULPI для stm32
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_SET);
   HAL_Delay(10);
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_RESET);
+  // Прием данных из консольки
   HAL_UART_Receive_DMA(&huart3, &rx[0], sizeof(rx));
+
   memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
   memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
@@ -208,13 +148,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if(DCMI_flag) {
-      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-      copy_pixels();
-      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-      UVC_flag = 1;
-      DCMI_flag = 0;
-    }
+    ZX_CAP_Proc();
     printf_flush();
 
     /* USER CODE END WHILE */

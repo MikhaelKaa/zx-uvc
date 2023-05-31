@@ -6,6 +6,22 @@
 extern DCMI_HandleTypeDef hdcmi;
 uint8_t DCMI_flag;
 
+void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
+}
+
+void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
+ 
+}
+
+void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
+  DCMI_flag = 1;
+  //HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
+  UVC_flag = 0;
+  
+}
+void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
+  //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
 
 uint16_t test_offset = 0;
 int offset_x;
