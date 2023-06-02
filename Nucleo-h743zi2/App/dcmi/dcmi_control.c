@@ -24,22 +24,26 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
 }
 
 uint16_t test_offset = 0;
-int offset_x;
-int  offset_y;
+int offset_x = 0;
+int  offset_y = 0;
 
 
 void dcmi_start_gmx_sc(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
 void dcmi_start_gmx_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_pent, (sizeof(zx_buf_gmx_pent)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
+void dcmi_start_pent(void) {
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+}
 void dcmi_start(void) {  
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
     printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
     printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
 }
@@ -136,9 +140,9 @@ void load_gmx_scorpion_set(void) {
 
 void load_gmx_pentagon_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_gmx_pent;
-    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
-    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
+    copy_pixels = zx_copy_pix_pent;
+    hdcmi.Instance->CR |=  DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 40;
     offset_y = 88;
