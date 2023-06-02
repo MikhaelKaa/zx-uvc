@@ -50,12 +50,14 @@ extern "C" {
 
 
 #pragma pack(push, 1)
-extern uint8_t zx_buf_gmx_sc[296][432];
-extern uint8_t zx_buf_gmx_pent[304][432];
+//extern uint8_t zx_buf_gmx_sc[296][432];
+//extern uint8_t zx_buf_gmx_pent[304][432];
+extern uint8_t zx_buf_pent[304][432-16];
 #pragma pack(pop)
 
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
+void zx_copy_pix_pent(void);
 
 extern uint8_t UVC_flag;
 extern int offset_x;

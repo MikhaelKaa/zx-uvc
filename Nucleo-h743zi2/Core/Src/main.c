@@ -129,8 +129,9 @@ int main(void)
   // Прием данных из консольки
   HAL_UART_Receive_DMA(&huart3, &rx[0], sizeof(rx));
 
-  memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
-  memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
+  //memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
+  //memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
+  memset(zx_buf_pent, 0x55, sizeof(zx_buf_pent));
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
   init_pix_table();
   printf("zx uvc start\r\n");
