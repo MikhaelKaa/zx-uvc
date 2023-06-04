@@ -12,12 +12,12 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
 void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
  
 }
-
+uint32_t XferTransfer = 0;
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
   DCMI_flag = 1;
   //HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
   UVC_flag = 0;
-  
+  XferTransfer = hdcmi->XferCount;
 }
 void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
   //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -25,27 +25,19 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
 
 uint16_t test_offset = 0;
 int offset_x = 0;
-int  offset_y = 0;
+int offset_y = 0;
 
 
-void dcmi_start_gmx_sc(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+void dcmi_start_sc(void) {
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_sc, (sizeof(zx_buf_sc)/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
-void dcmi_start_gmx_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
-}
 
-void dcmi_start_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
-}
 void dcmi_start(void) {  
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_sc, (sizeof(zx_buf_sc)/4) - test_offset);
     printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
-    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
+    //printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
 }
 
 void dcmi_stop(void) {  
@@ -114,6 +106,7 @@ void print_all_param(void) {
     print_pixclk();
     printf("offset x = %d\r\n", offset_x);
     printf("offset y = %d\r\n", offset_y);
+    printf("XferTransfer = %d\r\n", XferTransfer);
 }
 
 void inc_test_offset(void) {
@@ -126,29 +119,18 @@ void dec_test_offset(void) {
     printf("dec test offset. TO = %d\r\n", test_offset);
 }
 
-void load_gmx_scorpion_set(void) {
+void load_scorpion_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_gmx_sc;
+    copy_pixels = zx_copy_pix_sc;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
-    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
     offset_y = 88;
     printf("Load GMX Scorpion settings\r\n");
-    dcmi_start_gmx_sc();
+    dcmi_start_sc();
 }
 
-void load_gmx_pentagon_set(void) {
-    dcmi_stop();
-    copy_pixels = zx_copy_pix_pent;
-    hdcmi.Instance->CR |=  DCMI_CR_VSPOL_Msk;
-    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
-    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
-    offset_x = 40;
-    offset_y = 88;
-    printf("Load GMX Pentagon settings\r\n");
-    dcmi_start_gmx_pent();
-}
 
 void case_help(void) {
     printf("\r\n\
@@ -180,8 +162,8 @@ void dcmi_control(uint8_t cmd) {
     case 'p': print_all_param(); break;
     case 'q': inc_test_offset(); break;
     case 'a': dec_test_offset(); break;
-    case '1': load_gmx_scorpion_set(); break;
-    case '2': load_gmx_pentagon_set(); break;
+    case '1': load_scorpion_set(); break;
+    //case '2': load_gmx_pentagon_set(); break;
     case 'w': offset_x++; break;
     case 's': offset_x--; break;
     case 'e': offset_y++; break;

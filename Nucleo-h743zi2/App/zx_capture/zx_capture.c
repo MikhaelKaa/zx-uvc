@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include "dcmi.h"
 
-void (*copy_pixels)(void) = zx_copy_pix_pent;
+void (*copy_pixels)(void) = zx_copy_pix_sc;
 
 // gmx-scorpion 296x432
 // gmx-pentagon 304x432
 #pragma pack(push, 1)
 //RAM_D2 uint8_t zx_buf_gmx_sc[296][432];
 //RAM_D2 uint8_t zx_buf_gmx_pent[304][432];
-RAM_D2 uint8_t zx_buf_pent[304][432-16];
+RAM_D2 uint8_t zx_buf_sc[296][432-48];
 #pragma pack(pop)
 
 // Таблица соответствия пикселся спектрума (RGBI) пикселю RGB565.
@@ -37,34 +37,15 @@ void init_pix_table(void)
   }
 }
 
-// time ~7.7ms @480MHz (stm32h743, gcc -O3)
-void zx_copy_pix_gmx_sc(void)
+void zx_copy_pix_sc(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
+      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_sc[j+0][k+0]];
     }
   }
 }
 
-// time ~3.9ms @480MHz (stm32h743, gcc -O3)
-void zx_copy_pix_gmx_pent(void)
-{
-  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
-    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
-    }
-  }
-}
-
-void zx_copy_pix_pent(void)
-{
-  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
-    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+72]];
-    }
-  }
-}
 
 void ZX_CAP_Proc(void);
 void ZX_CAP_Proc(void) {

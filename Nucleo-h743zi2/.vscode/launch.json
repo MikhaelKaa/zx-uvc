@@ -12,6 +12,7 @@
 			"device": "stlink",
 			"device": "Cortex-M7",
 			"interface": "swd",
+			"showDevDebugOutput": "raw",
 			//"ipAddress": null,
 			//"serialNumber": null,
 			"configFiles": [
