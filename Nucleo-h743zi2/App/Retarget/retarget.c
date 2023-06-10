@@ -6,7 +6,7 @@
 #include "retarget.h"
 
 // printf buffer
-#define BUF_SZ  (4096)
+#define BUF_SZ  (4096*2)
 RAM_D1 uint8_t  buf[BUF_SZ];
 volatile int counter = 0U;
 

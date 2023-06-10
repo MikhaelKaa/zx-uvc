@@ -32,7 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "uvc_screen.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,7 +59,7 @@ void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
 void zx_copy_pix_pent(void);
 
-extern uint8_t UVC_flag;
+extern uint8_t uvc_buff2pc;
 extern int offset_x;
 extern int  offset_y;
 extern void (*copy_pixels)(void);
@@ -110,7 +110,32 @@ void Error_Handler(void);
 #define LD2_Pin GPIO_PIN_1
 #define LD2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
+#define DEBUG_LEVEL                            1U
+#ifdef DEBUG_LEVEL
+extern char DBG_buf[31];
+#endif
+/* DEBUG macros */
+#if (DEBUG_LEVEL == 0U)
+#define  DBG(...)   do { \
+                                 printf(__VA_ARGS__); \
+                               } while (0)
+#endif
 
+#if (DEBUG_LEVEL == 1U)
+#define  DBG(...) do { \
+                               printf(__VA_ARGS__); \
+                               sprintf(DBG_buf, __VA_ARGS__); \
+                               uvc_screen_printf(DBG_buf); \
+                               uvc_fill_text_buf(); \
+                             } while (0)
+#endif
+
+#if (DEBUG_LEVEL == 2U)
+#define  DBG(...)   do { \
+                                 printf(__VA_ARGS__); \
+                                 uvc_screen_printf(__VA_ARGS__); \
+                               } while (0)
+#endif
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

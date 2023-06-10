@@ -86,6 +86,7 @@ C_SOURCES 	+= $(wildcard App/Retarget/*.c)
 C_SOURCES 	+= $(wildcard App/Terminal/src/*.c)
 C_SOURCES 	+= $(wildcard App/dcmi/*.c)
 C_SOURCES 	+= $(wildcard App/zx_capture/*.c)
+C_SOURCES 	+= $(wildcard App/uvc_screen/*.c)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -159,7 +160,7 @@ C_INCLUDES += -IApp/usb_uvc/Inc
 C_INCLUDES += -IApp/Terminal/inc
 C_INCLUDES += -IApp/dcmi
 C_INCLUDES += -IApp/zx_capture
-
+C_INCLUDES += -IApp/uvc_screen
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 

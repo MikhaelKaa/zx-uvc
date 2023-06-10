@@ -36,7 +36,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define VERSION "0.1"
+const unsigned char completeVersion[] = "Version " VERSION " Date "__DATE__ " Time "__TIME__;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,7 +64,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
+char DBG_buf[31];
 RAM_D1 uint8_t rx[2] = {0, 0};
 void (*uart_rx_callback)(uint8_t) = dcmi_control;
 
@@ -120,30 +121,48 @@ int main(void)
   MX_DCMI_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+  
+  ///DBG("%s", completeVersion);
+  //HAL_Delay(5);
+  DBG("\r\n");
+  DBG("Device init start\r\n");
   // Моргнем светиком и сбросим физику ULPI для stm32
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_SET);
+  DBG("ULPI_RESET_Pin set\r\n");
   HAL_Delay(10);
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_RESET);
+  DBG("ULPI_RESET_Pin reset\r\n");
   // Прием данных из консольки
   HAL_UART_Receive_DMA(&huart3, &rx[0], sizeof(rx));
-
+  DBG("HAL_UART_Receive_DMA\r\n");
   //memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
   //memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
   memset(zx_buf_pent, 0x55, sizeof(zx_buf_pent));
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
+  DBG("Clear buffers\r\n");
   init_pix_table();
-  printf("zx uvc start\r\n");
-
+  //DBG("zx uvc start\r\n");
+  DBG("MAIN start\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    ZX_CAP_Proc();
+    //ZX_CAP_Proc();
+    //UVC_SCREEN_test();
+
+    uvc_buff2pc = 1;
+    static int i = 0;
+    i++;
+    //DBG("zx uvc counter %d\r\n", i);
+    //DBG("zx uvc counter %s\r\n", "hello");
+    
+    HAL_Delay(1000);
     printf_flush();
+    
 
     /* USER CODE END WHILE */
 

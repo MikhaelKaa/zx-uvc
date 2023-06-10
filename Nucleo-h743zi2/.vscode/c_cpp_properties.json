@@ -21,7 +21,8 @@
                 "${workspaceFolder}/Drivers/CMSIS/Core/Include",
                 "${workspaceFolder}/Core/Inc",
                 "${workspaceFolder}/App/dcmi",
-                "${workspaceFolder}/App/zx_capture"
+                "${workspaceFolder}/App/zx_capture",
+                "${workspaceFolder}/App/uvc_screen"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

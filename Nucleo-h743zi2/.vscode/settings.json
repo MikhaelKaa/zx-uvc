@@ -45,6 +45,7 @@
     "gpio.h": "c",
     "usb_device.h": "c",
     "retarget.h": "c",
-    "dcmi.h": "c"
+    "dcmi.h": "c",
+    "uvc_screen.h": "c"
   },
 }
