@@ -25,8 +25,13 @@ void uvc_render_text_buf(void) {
     }
 }
 
+//void uvc_screen_printf(const char* format, ...) {
 void uvc_screen_printf(const char* format) {
-    //if(++uvc_screen_y >= size_y) uvc_screen_y = 0;
+    //char temp_buf[32];
+    //va_list args;
+    //va_start(args, format);
+    //sprintf(temp_buf, format, args);
+    //va_end(args);
     strcpy(&text_buf[(uvc_screen_y--%size_y)][0], format);
 }
 
