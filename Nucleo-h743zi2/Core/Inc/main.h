@@ -126,7 +126,7 @@ extern char DBG_buf[31];
                                printf(__VA_ARGS__); \
                                sprintf(DBG_buf, __VA_ARGS__); \
                                uvc_screen_printf(DBG_buf); \
-                               uvc_fill_text_buf(); \
+                               uvc_render_text_buf(); \
                              } while (0)
 #endif
 

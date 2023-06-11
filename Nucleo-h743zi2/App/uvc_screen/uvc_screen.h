@@ -5,6 +5,6 @@
 
 void UVC_SCREEN_test(void);
 void uvc_screen_printf(const char* format);
-void uvc_fill_text_buf(void);
+void uvc_render_text_buf(void);
 
 #endif // UVC_SCREEN 

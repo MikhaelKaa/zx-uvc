@@ -160,7 +160,7 @@ int main(void)
     //DBG("zx uvc counter %d\r\n", i);
     //DBG("zx uvc counter %s\r\n", "hello");
     
-    HAL_Delay(1000);
+    HAL_Delay(10);
     printf_flush();
     
 
