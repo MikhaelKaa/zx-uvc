@@ -1,0 +1,5 @@
+USB3300 USB HS Board (Waveshare Electronics)
+NUCLEO-H743ZI2 (STMicroelectronics)
+DSX321G 24 MHZ
+220...330 резисторы
+МГТФ

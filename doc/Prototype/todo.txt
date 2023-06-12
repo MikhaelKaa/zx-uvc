@@ -1,0 +1,34 @@
+USB3300 USB HS Board:
+1. delete 24MHz
+2. delete USB HOST Connector
+3. delete pin headers
+4. 1.5 ... 4.7uF capacitor GND-3.3V
+
+NUCLEO-H743ZI2
+1. delete sb64
+2. delete sb57
+3. delete sb72
+4. delete sb36
+5. delete sb27
+6. delete sb30
+7. delete sb29
+8. delete sb31
+9. delete sb45
+10. X3 - set DSX321G 24 MHZ (sb3 & sb4)
+11. delete JP6 RMII TXD
+
+stp   -> CN9.3
+data7 -> CN7.13
+nxt   -> CN9.5
+data6 -> PB13 (CN12)
+dir   -> CN9.9
+data5 -> CN7.7
+clk   -> CN7.10
+data4 -> CN10.34
+rst   -> PD13 (CN12)
+data3 -> CN10.32
+data2 -> CN9.7
+data1 -> CN10.31
+data0 ->   CN9.1
+
+CN8.4 (MCO, 24MHZ) -> resistor 220...330 -> 3300.24MHz
