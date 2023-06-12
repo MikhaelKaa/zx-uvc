@@ -49,12 +49,16 @@ extern "C" {
 #define UVC_USE_RGB565
 
 
-#pragma pack(push, 1)
+
 //extern uint8_t zx_buf_gmx_sc[296][432];
 //extern uint8_t zx_buf_gmx_pent[304][432];
-extern uint8_t zx_buf_pent[304][432-16];
-#pragma pack(pop)
+//extern uint8_t zx_buf_pent[304][432-16];
+extern uint8_t dcmi_buf[131328]; 
+#define ZX_GMX_SCORPION_LEN (127872U)
+#define ZX_GMX_PENTAGON_LEN (131328U)
+extern uint16_t pix_per_line;
 
+void zx_copy_pix(void);
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
 void zx_copy_pix_pent(void);

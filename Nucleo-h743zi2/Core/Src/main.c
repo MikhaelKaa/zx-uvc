@@ -131,7 +131,7 @@ int main(void)
 
   //memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
   //memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
-  memset(zx_buf_pent, 0x55, sizeof(zx_buf_pent));
+  memset(dcmi_buf, 0x55, sizeof(dcmi_buf));
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
   init_pix_table();
   printf("zx uvc start\r\n");

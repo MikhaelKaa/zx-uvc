@@ -29,23 +29,24 @@ int  offset_y = 0;
 
 
 void dcmi_start_gmx_sc(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)dcmi_buf, (ZX_GMX_SCORPION_LEN/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
 void dcmi_start_gmx_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)dcmi_buf, (ZX_GMX_PENTAGON_LEN/4) - test_offset);
     printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
 void dcmi_start_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+    //int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
+    //printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+    printf("WARNING!!! Nothing to do\r\n");
 }
 void dcmi_start(void) {  
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
-    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
+    //int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
+    //printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
+    printf("WARNING!!! Nothing to do\r\n");
 }
 
 void dcmi_stop(void) {  
@@ -128,7 +129,8 @@ void dec_test_offset(void) {
 
 void load_gmx_scorpion_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_gmx_sc;
+    //copy_pixels = zx_copy_pix_gmx_sc;
+    pix_per_line = 432;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
@@ -140,9 +142,10 @@ void load_gmx_scorpion_set(void) {
 
 void load_gmx_pentagon_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_pent;
-    hdcmi.Instance->CR |=  DCMI_CR_VSPOL_Msk;
-    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
+    //copy_pixels = zx_copy_pix_pent;
+    pix_per_line = 432;
+    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 40;
     offset_y = 88;
