@@ -16,3 +16,10 @@ Nucleo-h743zi2/build/nuc-h7-uvc.bin
 *.map
 /Nucleo-h743zi2/Core/Inc/Backup/*.bak
 /Nucleo-h743zi2/Core/Src/Backup/*.bak
+incremental_db
+db
+*.rpt
+*.jdi
+*.summary
+/LDM-PP 2.7128/*.bak
+/LDM-PP 2.7128/output_files/*.done
