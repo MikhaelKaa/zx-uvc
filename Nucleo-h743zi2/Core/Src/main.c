@@ -21,6 +21,7 @@
 #include "dcmi.h"
 #include "dma.h"
 #include "rng.h"
+#include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
@@ -31,7 +32,7 @@
 #include <string.h>
 #include "dcmi_control.h"
 #include "zx_capture.h"
-
+#include "uvc_screen.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +64,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
+char DBG_buf[40];
 RAM_D1 uint8_t rx[2] = {0, 0};
 void (*uart_rx_callback)(uint8_t) = dcmi_control;
 
@@ -71,14 +72,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART3) {
     uart_rx_callback(rx[1]);
-  }   
+  }
 }
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART3) {
     uart_rx_callback(rx[0]);
-  }   
+  }
 }
 
 /* USER CODE END 0 */
@@ -119,6 +120,7 @@ int main(void)
   MX_RNG_Init();
   MX_DCMI_Init();
   MX_USART3_UART_Init();
+  MX_TIM15_Init();
   /* USER CODE BEGIN 2 */
   // Моргнем светиком и сбросим физику ULPI для stm32
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -134,17 +136,19 @@ int main(void)
   memset(dcmi_buf, 0x55, sizeof(dcmi_buf));
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
   init_pix_table();
-  printf("zx uvc start\r\n");
-
+  DBG("zx uvc start\r\n");
+  HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    ZX_CAP_Proc();
+    //ZX_CAP_Proc();
+    UVC_flag = 1;
+    //uvc_render_text_buf();
     printf_flush();
-
+//HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

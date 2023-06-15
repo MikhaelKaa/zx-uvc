@@ -24,73 +24,58 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
 }
 
 uint16_t test_offset = 0;
+uint32_t last_start_len = 0;
 int offset_x = 0;
 int  offset_y = 0;
 
-
-void dcmi_start_gmx_sc(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)dcmi_buf, (ZX_GMX_SCORPION_LEN/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
-}
-
-void dcmi_start_gmx_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)dcmi_buf, (ZX_GMX_PENTAGON_LEN/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
-}
-
-void dcmi_start_pent(void) {
-    //int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    //printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
-    printf("WARNING!!! Nothing to do\r\n");
-}
-void dcmi_start(void) {  
-    //int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_gmx_sc, (sizeof(zx_buf_gmx_sc)/4) - test_offset);
-    //printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
-    printf("WARNING!!! Nothing to do\r\n");
+void dcmi_start(uint32_t len) { 
+    DBG("HAL_DCMI_Start_DMA with len=%ld\r\n", len);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)dcmi_buf, (len/4));
+    DBG("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
 }
 
 void dcmi_stop(void) {  
     int dcmi_ret = HAL_DCMI_Stop(&hdcmi);
-    printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
+    DBG("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
 }
 
 void dcmi_suspend(void) {  
     int dcmi_ret = HAL_DCMI_Suspend(&hdcmi);
-    printf("HAL_DCMI_Suspend return %d\r\n", dcmi_ret);
+    DBG("HAL_DCMI_Suspend return %d\r\n", dcmi_ret);
 }
 
 void dcmi_resume(void) {  
     int dcmi_ret = HAL_DCMI_Resume(&hdcmi);
-    printf("HAL_DCMI_Resume return %d\r\n", dcmi_ret);
+    DBG("HAL_DCMI_Resume return %d\r\n", dcmi_ret);
 }
 
 void print_vs_pol(void){
     if((hdcmi.Instance->CR>>DCMI_CR_VSPOL_Pos) & 1U){
         //1: DCMI_VSYNC active high
-        printf("DCMI_VSYNC active high\r\n");
+        DBG("DCMI_VSYNC active high\r\n");
     } else {
         //0: DCMI_VSYNC active low
-        printf("DCMI_VSYNC active low\r\n");
+        DBG("DCMI_VSYNC active low\r\n");
     }
 }
 
 void print_hs_pol(void) {
     if((hdcmi.Instance->CR>>DCMI_CR_HSPOL_Pos) & 1U){
         //1: DCMI_HSYNC active high
-        printf("DCMI_HSYNC active high\r\n");
+        DBG("DCMI_HSYNC active high\r\n");
     } else {
         //0: DCMI_HSYNC active low
-        printf("DCMI_HSYNC active low\r\n");
+        DBG("DCMI_HSYNC active low\r\n");
     }
 }
 
 void print_pixclk(void) {
     if((hdcmi.Instance->CR>>DCMI_CR_PCKPOL_Pos) & 1U)
         //1: Rising edge active
-        printf("DCMI pixel clock Rising edge active\r\n");
+        DBG("DCMI pixel clock Rising edge active\r\n");
     else
         //0: Falling edge active
-        printf("DCMI pixel clock Falling edge active\r\n");
+        DBG("DCMI pixel clock Falling edge active\r\n");
 }
 
 void dcmi_toogle_VS_polarity(void) {
@@ -109,22 +94,22 @@ void dcmi_toogle_PIXCLK_edge(void) {
 }
 
 void print_all_param(void) {
-    printf("\r\n***************\r\n");
+    DBG("\r\n***************\r\n");
     print_vs_pol();
     print_hs_pol();
     print_pixclk();
-    printf("offset x = %d\r\n", offset_x);
-    printf("offset y = %d\r\n", offset_y);
+    DBG("offset x = %d\r\n", offset_x);
+    DBG("offset y = %d\r\n", offset_y);
 }
 
 void inc_test_offset(void) {
     test_offset++;
-    printf("inc test offset. TO = %d\r\n", test_offset);
+    DBG("inc test offset. TO = %d\r\n", test_offset);
 }
 
 void dec_test_offset(void) {
     test_offset--;
-    printf("dec test offset. TO = %d\r\n", test_offset);
+    DBG("dec test offset. TO = %d\r\n", test_offset);
 }
 
 void load_gmx_scorpion_set(void) {
@@ -136,8 +121,10 @@ void load_gmx_scorpion_set(void) {
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
     offset_y = 88;
-    printf("Load GMX Scorpion settings\r\n");
-    dcmi_start_gmx_sc();
+    DBG("Load GMX Scorpion settings\r\n");
+    //dcmi_start_gmx_sc();
+    last_start_len = ZX_GMX_SCORPION_LEN;
+    dcmi_start(ZX_GMX_SCORPION_LEN);
 }
 
 void load_gmx_pentagon_set(void) {
@@ -149,8 +136,10 @@ void load_gmx_pentagon_set(void) {
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 40;
     offset_y = 88;
-    printf("Load GMX Pentagon settings\r\n");
-    dcmi_start_gmx_pent();
+    DBG("Load GMX Pentagon settings\r\n");
+    //dcmi_start_gmx_pent();
+    last_start_len = ZX_GMX_PENTAGON_LEN;
+    dcmi_start(ZX_GMX_PENTAGON_LEN);
 }
 
 void case_help(void) {
@@ -173,7 +162,7 @@ void case_help(void) {
 void dcmi_control(uint8_t cmd) {
     switch (cmd) {
     case 'h': case_help(); break;
-    case 'z': dcmi_start(); break;
+    case 'z': dcmi_start(last_start_len); break;
     case 'x': dcmi_stop(); break;
     case 'c': dcmi_suspend(); break;
     case 'v': dcmi_resume(); break;

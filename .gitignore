@@ -14,3 +14,5 @@ Nucleo-h743zi2/build/nuc-h7-uvc.bin
 *.hex
 *.map
 *.map
+/Nucleo-h743zi2/Core/Inc/Backup/*.bak
+/Nucleo-h743zi2/Core/Src/Backup/*.bak
