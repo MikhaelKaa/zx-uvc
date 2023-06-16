@@ -144,8 +144,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    //ZX_CAP_Proc();
-    UVC_flag = 1;
+    ZX_CAP_Proc();
+    //UVC_flag = 1;
     //uvc_render_text_buf();
     printf_flush();
 //HAL_Delay(10);
