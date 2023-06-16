@@ -18,9 +18,9 @@ assign DCMI_DATA[1] = ZX_G;
 assign DCMI_DATA[2] = ZX_B;
 assign DCMI_DATA[3] = ZX_I;
 
-assign DCMI_DATA[4] = ZX_PIX_CLK;
-assign DCMI_DATA[5] = ZX_VS;
-assign DCMI_DATA[6] = ZX_HS;
+assign DCMI_DATA[4] = 1'b0;
+assign DCMI_DATA[5] = 1'b0;
+assign DCMI_DATA[6] = 1'b0;
 assign DCMI_DATA[7] = 1'b0;
 
 assign DCMI_PIXCLK = ZX_PIX_CLK;
