@@ -82,10 +82,10 @@ VCCIO                        : 18        : power  :                   : 5.0V    
 RESERVED                     : 19        :        :                   :         :           :                
 RESERVED                     : 20        :        :                   :         :           :                
 RESERVED                     : 21        :        :                   :         :           :                
-RESERVED                     : 22        :        :                   :         :           :                
-RESERVED                     : 23        :        :                   :         :           :                
-RESERVED                     : 24        :        :                   :         :           :                
-RESERVED                     : 25        :        :                   :         :           :                
+SPI_CLK                      : 22        : input  : TTL               :         :           : Y              
+SPI_MOSI                     : 23        : input  : TTL               :         :           : Y              
+SPI_MISO                     : 24        : output : TTL               :         :           : Y              
+SPI_NSS                      : 25        : input  : TTL               :         :           : Y              
 GND                          : 26        : gnd    :                   :         :           :                
 RESERVED                     : 27        :        :                   :         :           :                
 RESERVED                     : 28        :        :                   :         :           :                
@@ -150,7 +150,7 @@ GND                          : 86        : gnd    :                   :         
 GND+                         : 87        :        :                   :         :           :                
 GND+                         : 88        :        :                   :         :           :                
 GND+                         : 89        :        :                   :         :           :                
-GND+                         : 90        :        :                   :         :           :                
+reset                        : 90        : input  : TTL               :         :           : Y              
 VCCINT                       : 91        : power  :                   : 5.0V    :           :                
 RESERVED                     : 92        :        :                   :         :           :                
 RESERVED                     : 93        :        :                   :         :           :                

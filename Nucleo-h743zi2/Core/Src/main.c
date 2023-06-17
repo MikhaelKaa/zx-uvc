@@ -21,6 +21,7 @@
 #include "dcmi.h"
 #include "dma.h"
 #include "rng.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
@@ -82,6 +83,12 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
   }
 }
 
+typedef struct pre_dcmi_converter_control{
+  unsigned enable : 1;
+  unsigned func   : 2;
+  unsigned unused : 5;
+}pre_dcmi_t;
+
 /* USER CODE END 0 */
 
 /**
@@ -121,6 +128,7 @@ int main(void)
   MX_DCMI_Init();
   MX_USART3_UART_Init();
   MX_TIM15_Init();
+  MX_SPI5_Init();
   /* USER CODE BEGIN 2 */
   // Моргнем светиком и сбросим физику ULPI для stm32
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -138,6 +146,11 @@ int main(void)
   init_pix_table();
   DBG("zx uvc start\r\n");
   HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
+  #pragma pack (push, 1)
+  uint8_t spi_rx[2] = {0, 1}; 
+  uint8_t spi_tx[2] = {0, 1}; 
+  uint8_t test_cnt = 0;
+  #pragma pack(pop)
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -147,8 +160,18 @@ int main(void)
     ZX_CAP_Proc();
     //UVC_flag = 1;
     //uvc_render_text_buf();
+    if(test_cnt == 100) test_cnt = 0;
+    if(test_cnt++ == 0) {
+      HAL_SPI_TransmitReceive(&hspi5, spi_tx, spi_rx, sizeof(spi_tx), 10);
+      //HAL_SPI_Transmit(&hspi5, (uint8_t*)&spi_tx, sizeof(spi_tx), 10);
+      printf("spi_tx[0]=%d  \tspi_tx[1]=%d  \r\n", spi_tx[0], spi_tx[1]);
+      printf("spi_rx[0]=%d  \tspi_rx[1]=%d  \r\n\r\n", spi_rx[0], spi_rx[1]);
+      //static uint8_t temp;
+      if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) (*(pre_dcmi_t*)(&spi_tx[1])).func++;//temp++;
+      //(*(pre_dcmi_t*)(&spi_tx[1])).func = temp;
+    }
+    HAL_Delay(1);
     printf_flush();
-//HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

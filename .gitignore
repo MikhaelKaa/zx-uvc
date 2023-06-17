@@ -23,3 +23,4 @@ db
 *.summary
 /LDM-PP 2.7128/*.bak
 /LDM-PP 2.7128/output_files/*.done
+*.smsg
