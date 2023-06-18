@@ -46,10 +46,10 @@ uint16_t pix_per_line = 0;
 void zx_copy_pix(void)
 {
   register uint16_t temp;
-  for(uint16_t j = UVC_VIDEO_HEIGHT-1; j !=0; j--) {
+  for(uint16_t j = UVC_VIDEO_HEIGHT-1; j != 0; j--) {
     for(uint16_t k = 0; k < UVC_VIDEO_WIDTH; k++) {
       temp = zx_pix_tab[(*(((uint8_t*)dcmi_buf)+(j+42)*pix_per_line+(k+88)))&0b00001111];
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = temp;
+      ucv_buf[(UVC_VIDEO_HEIGHT)-j][k] = temp;
     }
   }
 }

@@ -86,8 +86,23 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 typedef struct pre_dcmi_converter_control{
   unsigned enable : 1;
   unsigned func   : 2;
-  unsigned unused : 5;
+  unsigned sync_meter  : 1;
+  unsigned unused : 4;
 }pre_dcmi_t;
+
+
+void sync_meter(void);
+  int vs_value_0 = 0;
+  int vs_value_1 = 0;
+void sync_meter(void) {
+  int len = sizeof(dcmi_buf);
+  vs_value_0 = 0;
+  vs_value_1 = 0;
+  for(uint32_t n = 0; n < len; n++) {
+    if(dcmi_buf[n]&0b00100000) vs_value_0++;
+    else vs_value_1++;
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -147,10 +162,11 @@ int main(void)
   DBG("zx uvc start\r\n");
   HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
   #pragma pack (push, 1)
-  uint8_t spi_rx[2] = {0, 1}; 
-  uint8_t spi_tx[2] = {0, 1}; 
+  uint8_t spi_rx = 0; 
+  uint8_t spi_tx = 1; 
   uint8_t test_cnt = 0;
   #pragma pack(pop)
+  HAL_SPI_TransmitReceive(&hspi5, &spi_tx, &spi_rx, sizeof(spi_tx), 10);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -158,18 +174,21 @@ int main(void)
   while (1)
   {
     ZX_CAP_Proc();
+    //sync_meter();
+    //printf("vs_value_0 = %d\r\n", vs_value_0);
+    //printf("vs_value_1 = %d\r\n", vs_value_1);
+    
     //UVC_flag = 1;
     //uvc_render_text_buf();
-    if(test_cnt == 100) test_cnt = 0;
+    /*if(test_cnt == 100) test_cnt = 0;
     if(test_cnt++ == 0) {
-      HAL_SPI_TransmitReceive(&hspi5, spi_tx, spi_rx, sizeof(spi_tx), 10);
+      HAL_SPI_TransmitReceive(&hspi5, &spi_tx, &spi_rx, sizeof(spi_tx), 10);
       //HAL_SPI_Transmit(&hspi5, (uint8_t*)&spi_tx, sizeof(spi_tx), 10);
-      printf("spi_tx[0]=%d  \tspi_tx[1]=%d  \r\n", spi_tx[0], spi_tx[1]);
-      printf("spi_rx[0]=%d  \tspi_rx[1]=%d  \r\n\r\n", spi_rx[0], spi_rx[1]);
-      //static uint8_t temp;
-      if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) (*(pre_dcmi_t*)(&spi_tx[1])).func++;//temp++;
-      //(*(pre_dcmi_t*)(&spi_tx[1])).func = temp;
-    }
+      printf("spi_tx=%d\r\n", spi_tx);
+      printf("spi_rx=%d\r\n", spi_rx);
+      
+      if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) (*(pre_dcmi_t*)(&spi_tx)).func++;
+    }*/
     HAL_Delay(1);
     printf_flush();
     /* USER CODE END WHILE */
