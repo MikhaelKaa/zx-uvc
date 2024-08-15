@@ -42,7 +42,7 @@ void zx_copy_pix_gmx_sc(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
     }
   }
 }
@@ -52,7 +52,7 @@ void zx_copy_pix_gmx_pent(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
     }
   }
 }
@@ -61,7 +61,7 @@ void zx_copy_pix_pent(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+72]];
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+72]];
     }
   }
 }

@@ -135,7 +135,7 @@ int main(void)
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
   init_pix_table();
   printf("zx uvc start\r\n");
-
+  dcmi_control('2');
   /* USER CODE END 2 */
 
   /* Infinite loop */

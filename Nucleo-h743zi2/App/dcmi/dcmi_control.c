@@ -5,7 +5,7 @@
 
 extern DCMI_HandleTypeDef hdcmi;
 uint8_t DCMI_flag;
-
+uint8_t uvc_cnt = 0;
 void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
 }
 
@@ -15,6 +15,7 @@ void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi) {
 
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi) {
   DCMI_flag = 1;
+    uvc_cnt++;
   //HAL_GPIO_TogglePin(test_pin0_GPIO_Port, test_pin0_Pin);
   UVC_flag = 0;
   
