@@ -22,10 +22,3 @@ RGB -> DCMI -> STM32H7 -> USB UVC
 * Переключение таймингов на лету.
 * ZS Scorpion
 * RGBI -> cpld -> rgb565
-
-
-[![Alt text](https://img.youtube.com/vi/VID/0.jpg)](https://www.youtube.com/watch?v=_kUv0Xv1mUQ)
-[![Alt text](https://img.youtube.com/vi/VID/0.jpg)](https://www.youtube.com/watch?v=-UVacC2syfI)
-
-
-Господи, дай мне спокойствие принять то, чего я не могу изменить, дай мне мужество изменить то, что я могу изменить. И дай мне мудрость отличить одно от другого.
