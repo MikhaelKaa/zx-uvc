@@ -32,6 +32,16 @@
 #include "dcmi_control.h"
 #include "zx_capture.h"
 
+#include "micros.h"
+#include "retarget.h"
+
+#include "ucmd.h"
+// #include "ucmd_time.h"
+#include "memory_man.h"
+#include "coremark.h"
+
+#include "micros.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,24 +72,45 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-
-RAM_D1 uint8_t rx[2] = {0, 0};
-void (*uart_rx_callback)(uint8_t) = dcmi_control;
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  if (huart->Instance == USART3) {
-    uart_rx_callback(rx[1]);
-  }   
+int ucmd_mcu_reset(int argc, char ** argv) {
+  NVIC_SystemReset();
+  return -1;
 }
+// define command list
+command_t cmd_list[] = {
+  {
+    .cmd  = "help",
+    .help = "print available commands with their help text",
+    .fn   = print_help_cb,
+  },
 
-void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
-{
-  if (huart->Instance == USART3) {
-    uart_rx_callback(rx[0]);
-  }   
-}
+  {
+    .cmd  = "reset",
+    .help = "reset mcu",
+    .fn   = ucmd_mcu_reset,
+  }, 
+
+  {
+    .cmd  = "mem",
+    .help = "memory man, use mem help",
+    .fn   = ucmd_mem,
+  },
+
+  // {
+  //   .cmd  = "time",
+  //   .help = "rtc time. to set type time hh mm ss",
+  //   .fn   = ucmd_time,
+  // },
+
+  {
+    .cmd  = "coremark",
+    .help = "coremark",
+    .fn   = coremark,
+  },
+  
+  
+  {}, // null list terminator DON'T FORGET THIS!
+};
 
 /* USER CODE END 0 */
 
@@ -91,6 +122,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+  us_init();
     offset_x = 40;
     offset_y = 72;
   
@@ -126,8 +158,9 @@ int main(void)
   HAL_Delay(10);
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   HAL_GPIO_WritePin(ULPI_RESET_GPIO_Port, ULPI_RESET_Pin, GPIO_PIN_RESET);
+
   // Прием данных из консольки
-  HAL_UART_Receive_DMA(&huart3, &rx[0], sizeof(rx));
+  printf_init();
 
   //memset(zx_buf_gmx_pent, 0x55, sizeof(zx_buf_gmx_pent));
   //memset(zx_buf_gmx_sc, 0x55, sizeof(zx_buf_gmx_sc));
@@ -135,15 +168,21 @@ int main(void)
   memset(ucv_buf, 0x55, sizeof(ucv_buf));
   init_pix_table();
   printf("zx uvc start\r\n");
+  printf("SystemCoreClock = %ld Hz\r\n", SystemCoreClock);
+  printf("micros = %ld\r\n", micros());
+  
+  
   dcmi_control('2');
+  ucmd_default_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    ZX_CAP_Proc();
     printf_flush();
+    ZX_CAP_Proc();
+    ucmd_default_proc();
 
     /* USER CODE END WHILE */
 

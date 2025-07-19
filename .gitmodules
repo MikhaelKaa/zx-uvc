@@ -1,0 +1,3 @@
+[submodule "Nucleo-h743zi2/app"]
+	path = Nucleo-h743zi2/app
+	url = https://github.com/MikhaelKaa/app.git

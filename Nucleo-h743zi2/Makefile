@@ -82,10 +82,18 @@ Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng_ex.c \
 Core/Src/dcmi.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c
 
-C_SOURCES 	+= $(wildcard App_local/Retarget/*.c)
+
 C_SOURCES 	+= $(wildcard App_local/Terminal/src/*.c)
 C_SOURCES 	+= $(wildcard App_local/dcmi/*.c)
 C_SOURCES 	+= $(wildcard App_local/zx_capture/*.c)
+
+C_SOURCES 	+= $(wildcard app/retarget/*.c)
+C_SOURCES 	+= $(wildcard app/u_read_line/*.c)
+# C_SOURCES 	+= $(wildcard app/ili9341_s/*.c)
+# C_SOURCES 	+= $(wildcard app/time/*.c)
+C_SOURCES 	+= $(wildcard app/mem/*.c)
+C_SOURCES 	+= $(wildcard app/coremark/*.c)
+
 
 # ASM sources
 ASM_SOURCES =  \
@@ -136,8 +144,23 @@ AS_DEFS =
 # C defines
 C_DEFS =  \
 -DUSE_HAL_DRIVER \
--DSTM32H743xx
+-DSTM32H743xx 
 
+# printf defines
+C_DEFS +=  \
+-DHAL_UART_xCallback \
+-DREATRGET_UART=huart3 \
+-DREATRGET_UART_INST=USART3 \
+-DRETARGET_UART_RAM_PRE=RAM_D1
+
+# Coremark defines
+C_DEFS +=  \
+-DITERATIONS=4096 \
+-DCLOCKS_PER_SEC=1000000 \
+-DCOREMARK_TIME=micros
+
+# BAREMETAL KEY for utilites linux&embedded
+C_DEFS +=  -DBAREMETAL
 
 # AS includes
 AS_INCLUDES = 
@@ -154,11 +177,18 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
 -IDrivers/CMSIS/Include
 
-C_INCLUDES += -IApp_local/Retarget/inc
 C_INCLUDES += -IApp_local/usb_uvc/Inc
 C_INCLUDES += -IApp_local/Terminal/inc
 C_INCLUDES += -IApp_local/dcmi
 C_INCLUDES += -IApp_local/zx_capture
+
+C_INCLUDES += -Iapp/retarget/
+C_INCLUDES += -Iapp/u_read_line/
+# C_INCLUDES += -Iapp/ili9341_s/
+# C_INCLUDES += -Iapp/time/
+C_INCLUDES += -Iapp/micros/
+C_INCLUDES += -Iapp/mem/
+C_INCLUDES += -Iapp/coremark/
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -228,5 +258,8 @@ clean:
 # dependencies
 #######################################
 -include $(wildcard $(BUILD_DIR)/*.d)
+
+flash_st:
+	openocd.exe -f ./dbg/stlink.cfg -f ./dbg/stm32h7x.cfg -c init -c "reset halt" -c "flash write_image erase build/nuc-h7-uvc.hex" -c "reset run" -c "exit"
 
 # *** EOF ***

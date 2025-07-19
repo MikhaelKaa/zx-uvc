@@ -11,7 +11,6 @@
                 "${workspaceRoot}\\Core\\Src\\**",
                 "${workspaceRoot}\\Core\\Inc\\**",
                 "${workspaceFolder}/USB_DEVICE/App",
-                "${workspaceFolder}/App_local/Retarget/inc",
                 "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
                 "${workspaceFolder}/USB_DEVICE/Target",
                 "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
@@ -21,13 +20,22 @@
                 "${workspaceFolder}/Drivers/CMSIS/Core/Include",
                 "${workspaceFolder}/Core/Inc",
                 "${workspaceFolder}/App_local/dcmi",
-                "${workspaceFolder}/App_local/zx_capture"
+                "${workspaceFolder}/App_local/zx_capture",
+                "${workspaceFolder}/App/retarget",
+                "${workspaceFolder}/App/micros",
+                "${workspaceFolder}/App/u_read_line",
+                "${workspaceFolder}/App/mem",
+                "${workspaceFolder}/App/coremark"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
                 "STM32H743xx",
                 "M7",
-                "GCC_ARMCM7"
+                "GCC_ARMCM7",
+                "HAL_UART_xCallback",
+                "REATRGET_UART=huart3",
+                "REATRGET_UART_INST=USART3",
+                "RETARGET_UART_RAM_PRE=RAM_D1"
             ],
             "cStandard": "c99",
             "cppStandard": "c++11",
