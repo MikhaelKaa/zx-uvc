@@ -74,18 +74,18 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c \
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c \
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c \
 Core/Src/dma.c \
-App/usb_uvc/Src/usbd_uvc.c \
-App/usb_uvc/Src/usbd_uvc_if.c \
+App_local/usb_uvc/Src/usbd_uvc.c \
+App_local/usb_uvc/Src/usbd_uvc_if.c \
 Core/Src/rng.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng_ex.c \
 Core/Src/dcmi.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c
 
-C_SOURCES 	+= $(wildcard App/Retarget/*.c)
-C_SOURCES 	+= $(wildcard App/Terminal/src/*.c)
-C_SOURCES 	+= $(wildcard App/dcmi/*.c)
-C_SOURCES 	+= $(wildcard App/zx_capture/*.c)
+C_SOURCES 	+= $(wildcard App_local/Retarget/*.c)
+C_SOURCES 	+= $(wildcard App_local/Terminal/src/*.c)
+C_SOURCES 	+= $(wildcard App_local/dcmi/*.c)
+C_SOURCES 	+= $(wildcard App_local/zx_capture/*.c)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -154,11 +154,11 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
 -IDrivers/CMSIS/Include
 
-C_INCLUDES += -IApp/Retarget/inc
-C_INCLUDES += -IApp/usb_uvc/Inc
-C_INCLUDES += -IApp/Terminal/inc
-C_INCLUDES += -IApp/dcmi
-C_INCLUDES += -IApp/zx_capture
+C_INCLUDES += -IApp_local/Retarget/inc
+C_INCLUDES += -IApp_local/usb_uvc/Inc
+C_INCLUDES += -IApp_local/Terminal/inc
+C_INCLUDES += -IApp_local/dcmi
+C_INCLUDES += -IApp_local/zx_capture
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
