@@ -66,13 +66,15 @@ void zx_copy_pix_pent(void)
   }
 }
 
-void ZX_CAP_Proc(void);
-void ZX_CAP_Proc(void) {
+
+int ZX_CAP_Proc(void) {
     if(DCMI_flag) {
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
       copy_pixels();
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
       UVC_flag = 1;
       DCMI_flag = 0;
+      return 0;
     }
+    return -1;
 }

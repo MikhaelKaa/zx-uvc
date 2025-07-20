@@ -72,6 +72,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+int ucmd_proxy(int argc, char ** argv) {
+  dcmi_control(argv[1][0]);
+  return 0;
+}
+
 int ucmd_mcu_reset(int argc, char ** argv) {
   NVIC_SystemReset();
   return -1;
@@ -102,6 +108,18 @@ command_t cmd_list[] = {
   //   .fn   = ucmd_time,
   // },
 
+  {
+    .cmd  = "p",
+    .help = "ucmd cmd proxy (for test)",
+    .fn   = ucmd_proxy,
+  },
+
+  {
+    .cmd  = "dcmi",
+    .help = "dcmi control",
+    .fn   = ucmd_dcmi,
+  },
+  
   {
     .cmd  = "coremark",
     .help = "coremark",
@@ -172,7 +190,7 @@ int main(void)
   printf("micros = %ld\r\n", micros());
   
   
-  dcmi_control('2');
+  dcmi_control('3');
   ucmd_default_init();
   /* USER CODE END 2 */
 
@@ -180,9 +198,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    printf_flush();
-    ZX_CAP_Proc();
     ucmd_default_proc();
+    printf_flush();
+    if(ZX_CAP_Proc() != 0) {
+      delay_us(100);
+    }
 
     /* USER CODE END WHILE */
 

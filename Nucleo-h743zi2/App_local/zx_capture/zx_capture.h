@@ -6,7 +6,7 @@
 #ifndef ZX_CAPTURE
 #define ZX_CAPTURE
 
-void ZX_CAP_Proc(void);
+int ZX_CAP_Proc(void);
 void init_pix_table(void);
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
