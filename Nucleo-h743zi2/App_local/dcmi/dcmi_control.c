@@ -13,6 +13,13 @@
 #include "main.h"
 #include "dcmi.h"
 #include "micros.h"
+#include "zx_capture.h"
+
+#ifdef BAREMETAL
+#define ENDL "\r\n"
+#else
+#define ENDL "\n"
+#endif // BAREMETAL
 
 extern DCMI_HandleTypeDef hdcmi;
 uint8_t DCMI_flag;
@@ -34,17 +41,21 @@ static volatile uint32_t dcmi_errors_event_cnt = 0;
 static volatile uint32_t dcmi_line_cnt = 0;
 static volatile uint32_t dcmi_line = 0;
 
-uint16_t test_offset = 0;
-int offset_x = 0;
-int offset_y = 0;
+uint16_t test_offset = 3198;
+volatile int offset_x = 0;
+volatile int offset_y = 0;
 
 void print_usage(void);
 void dcmi_show_settings(void);
+void dcmi_control(uint8_t cmd);
 
 static inline void dcmi_meter_proc(event_time_meter_t* meter);
 void dcmi_show_meters(event_time_meter_t* meter);
 
 int ucmd_dcmi(int argc, char ** argv) {
+
+    uint32_t offset = 0;
+    int temp = 0;
 
     switch (argc) {
     case 1:
@@ -57,35 +68,63 @@ int ucmd_dcmi(int argc, char ** argv) {
             dcmi_show_meters(&vsync);
             dcmi_show_meters(&line);
             dcmi_show_meters(&frame);
-            printf("dcmi_errors_event_cnt = %lu\r\n", dcmi_errors_event_cnt);
-            printf("dcmi_line = %lu\r\n", dcmi_line);
+            printf("dcmi_errors_event_cnt = %lu" ENDL, dcmi_errors_event_cnt);
+            printf("dcmi_line = %lu" ENDL, dcmi_line);
+            printf("zx_x = %u" ENDL, zx_x);
             
             return 0;
         }
     
     case 3:
-        if (strcmp(argv[1], "read") == 0) {
-            // if (sscanf(argv[2], "%lx", &addr) != 1) {
-            //     printf("Invalid address format" ENDL);
-            //     return -EINVAL;
-            // }
-            // ptr = (uint8_t *)addr;
-            // printf("0x%02x" ENDL, *ptr);
+        if (strcmp(argv[1], "start") == 0) {
+            if (sscanf(argv[2], "%lu", &offset) != 1) {
+                printf("Invalid offset format" ENDL);
+                return -EINVAL;
+            }
+            test_offset = offset;
+            dcmi_control('3');
+            return 0;
+        }
+        
+        if (strcmp(argv[1], "offx") == 0) {
+            if (sscanf(argv[2], "%d", &temp) != 1) {
+                printf("Invalid offset_x format" ENDL);
+                return -EINVAL;
+            }
+            offset_x = temp;
+            printf("offset_x = %d" ENDL, offset_x);
+            dcmi_control('3');
+            return 0;
+        }
+        
+        if (strcmp(argv[1], "offy") == 0) {
+            if (sscanf(argv[2], "%d", &temp) != 1) {
+                printf("Invalid offset_y format" ENDL);
+                return -EINVAL;
+            }
+            offset_y = temp;
+            printf("offset_y = %d" ENDL, offset_y);
+            dcmi_control('3');
+            return 0;
+        }
+
+        break;
+
+    case 4:
+        if (strcmp(argv[1], "start") == 0) {
+            if (sscanf(argv[2], "%lu", &offset) != 1) {
+                printf("Invalid offset format" ENDL);
+                return -EINVAL;
+            }
+            if (sscanf(argv[3], "%hu", &zx_x) != 1) {
+                printf("Invalid zx_x format" ENDL);
+                return -EINVAL;
+            }
+            test_offset = offset;
+            dcmi_control('3');
             return 0;
         }
         break;
-    
-    case 4:
-        if (strcmp(argv[1], "test") == 0) {
-            // if (sscanf(argv[2], "%lx", &addr) != 1 ||
-            //     sscanf(argv[3], "%lx", &len) != 1) 
-            // {
-            //     printf("Invalid arguments format" ENDL);
-            //     return -EINVAL;
-            // }
-            // return mem_test((uint8_t *)addr, len);
-            return 0;
-        }
         
     default:
         print_usage();
@@ -123,69 +162,69 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
 
 
 
-
+// TODO:
 void dcmi_start_gmx_sc(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
 }
 
 void dcmi_start_gmx_pent(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
 }
 
 void dcmi_start_pent(void) {
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
 }
 void dcmi_start(void) {  
     int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
-    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only\r\n");
+    printf("HAL_DCMI_Stop return %d" ENDL, dcmi_ret);
+    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only" ENDL);
 }
 
 void dcmi_stop(void) {  
     int dcmi_ret = HAL_DCMI_Stop(&hdcmi);
-    printf("HAL_DCMI_Stop return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Stop return %d" ENDL, dcmi_ret);
 }
 
 void dcmi_suspend(void) {  
     int dcmi_ret = HAL_DCMI_Suspend(&hdcmi);
-    printf("HAL_DCMI_Suspend return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Suspend return %d" ENDL, dcmi_ret);
 }
 
 void dcmi_resume(void) {  
     int dcmi_ret = HAL_DCMI_Resume(&hdcmi);
-    printf("HAL_DCMI_Resume return %d\r\n", dcmi_ret);
+    printf("HAL_DCMI_Resume return %d" ENDL, dcmi_ret);
 }
 
 void print_vs_pol(void){
     if((hdcmi.Instance->CR>>DCMI_CR_VSPOL_Pos) & 1U){
         //1: DCMI_VSYNC active high
-        printf("DCMI_VSYNC active high\r\n");
+        printf("DCMI_VSYNC active high" ENDL);
     } else {
         //0: DCMI_VSYNC active low
-        printf("DCMI_VSYNC active low\r\n");
+        printf("DCMI_VSYNC active low" ENDL);
     }
 }
 
 void print_hs_pol(void) {
     if((hdcmi.Instance->CR>>DCMI_CR_HSPOL_Pos) & 1U){
         //1: DCMI_HSYNC active high
-        printf("DCMI_HSYNC active high\r\n");
+        printf("DCMI_HSYNC active high" ENDL);
     } else {
         //0: DCMI_HSYNC active low
-        printf("DCMI_HSYNC active low\r\n");
+        printf("DCMI_HSYNC active low" ENDL);
     }
 }
 
 void print_pixclk(void) {
     if((hdcmi.Instance->CR>>DCMI_CR_PCKPOL_Pos) & 1U)
         //1: Rising edge active
-        printf("DCMI pixel clock Rising edge active\r\n");
+        printf("DCMI pixel clock Rising edge active" ENDL);
     else
         //0: Falling edge active
-        printf("DCMI pixel clock Falling edge active\r\n");
+        printf("DCMI pixel clock Falling edge active" ENDL);
 }
 
 void dcmi_toogle_VS_polarity(void) {
@@ -207,8 +246,8 @@ void dcmi_show_settings(void) {
     print_vs_pol();
     print_hs_pol();
     print_pixclk();
-    printf("offset x = %d\r\n", offset_x);
-    printf("offset y = %d\r\n", offset_y);
+    printf("offset x = %d" ENDL, offset_x);
+    printf("offset y = %d" ENDL, offset_y);
 }
 
 static inline void dcmi_meter_proc(event_time_meter_t* meter) {
@@ -229,26 +268,26 @@ void dcmi_show_meters(event_time_meter_t* meter) {
     }
 
     for(uint32_t i = 0; i < METR_BLEN; i++) {
-        // printf("%s->event_time_diff[%lu] = %lu us\r\n", meter->name, i, meter->event_time_diff[i]);
+        // printf("%s->event_time_diff[%lu] = %lu us" ENDL, meter->name, i, meter->event_time_diff[i]);
         if(meter->event_time_diff[i] >= _max)  _max = meter->event_time_diff[i];
         if(meter->event_time_diff[i] <= _min)  _min = meter->event_time_diff[i];
         _avg += meter->event_time_diff[i];
     }
     _avg /= METR_BLEN;
-    // printf("%s statistics\r\n", meter->name);
-    printf("%s max = %lu us\r\n",meter->name, _max);
-    printf("%s min = %lu us\r\n",meter->name, _min);
-    printf("%s avg = %lu us\r\n",meter->name, (uint32_t)_avg);
+    // printf("%s statistics" ENDL, meter->name);
+    printf("%s max = %lu us" ENDL,meter->name, _max);
+    printf("%s min = %lu us" ENDL,meter->name, _min);
+    printf("%s avg = %lu us" ENDL,meter->name, (uint32_t)_avg);
 }
 
 void inc_test_offset(void) {
     test_offset++;
-    printf("inc test offset. TO = %d\r\n", test_offset);
+    printf("inc test offset. TO = %d" ENDL, test_offset);
 }
 
 void dec_test_offset(void) {
     test_offset--;
-    printf("dec test offset. TO = %d\r\n", test_offset);
+    printf("dec test offset. TO = %d" ENDL, test_offset);
 }
 
 void load_gmx_scorpion_set(void) {
@@ -259,31 +298,34 @@ void load_gmx_scorpion_set(void) {
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
     offset_y = 88;
-    printf("Load GMX Scorpion settings\r\n");
+    printf("Load GMX Scorpion settings" ENDL);
     dcmi_start_gmx_sc();
 }
 void load_scorp_y_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_gmx_sc;
+    copy_pixels = zx_copy_pix_uni;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
-    offset_y = 88;
-    printf("Load Scorpion settings\r\n");
+    offset_y = -32;
+    printf("Load Scorpion settings" ENDL);
+    printf("test_offset = %u" ENDL, test_offset);
+    printf("zx_x = %u" ENDL, zx_x);
+    
     dcmi_start_gmx_sc();
 }
 
 
 void load_gmx_pentagon_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_pent;
+    copy_pixels = zx_copy_pix_gmx_pent;
     hdcmi.Instance->CR |=  DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 40;
     offset_y = 88;
-    printf("Load GMX Pentagon settings\r\n");
+    printf("Load GMX Pentagon settings" ENDL);
     dcmi_start_gmx_pent();
 }
 

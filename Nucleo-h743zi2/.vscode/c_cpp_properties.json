@@ -35,7 +35,8 @@
                 "HAL_UART_xCallback",
                 "REATRGET_UART=huart3",
                 "REATRGET_UART_INST=USART3",
-                "RETARGET_UART_RAM_PRE=RAM_D1"
+                "RETARGET_UART_RAM_PRE=RAM_D1",
+                "BAREMETAL"
             ],
             "cStandard": "c99",
             "cppStandard": "c++11",

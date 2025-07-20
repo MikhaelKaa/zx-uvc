@@ -57,11 +57,10 @@ extern uint8_t zx_buf_pent[304][432-16];
 
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
-void zx_copy_pix_pent(void);
 
 extern uint8_t UVC_flag;
-extern int offset_x;
-extern int  offset_y;
+extern volatile int offset_x;
+extern volatile int offset_y;
 extern void (*copy_pixels)(void);
 
 #ifdef UVC_USE_RGB565

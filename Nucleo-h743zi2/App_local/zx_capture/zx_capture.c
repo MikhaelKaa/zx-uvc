@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "dcmi.h"
 
-void (*copy_pixels)(void) = zx_copy_pix_pent;
+void (*copy_pixels)(void) = zx_copy_pix_gmx_pent;
 
 // gmx-scorpion 296x432
 // gmx-pentagon 304x432
@@ -47,17 +47,7 @@ void zx_copy_pix_gmx_sc(void)
   }
 }
 
-// time ~3.9ms @480MHz (stm32h743, gcc -O3)
 void zx_copy_pix_gmx_pent(void)
-{
-  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
-    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
-    }
-  }
-}
-
-void zx_copy_pix_pent(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
@@ -66,6 +56,17 @@ void zx_copy_pix_pent(void)
   }
 }
 
+uint16_t zx_x = 384;
+void zx_copy_pix_uni(void)
+{
+  uint8_t* buf_ptr = (uint8_t*)zx_buf_pent; 
+  for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
+    for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
+      uint32_t index = (j + offset_x) * zx_x + (k + offset_y);
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[buf_ptr[index]];
+    }
+  }
+}
 
 int ZX_CAP_Proc(void) {
     if(DCMI_flag) {
