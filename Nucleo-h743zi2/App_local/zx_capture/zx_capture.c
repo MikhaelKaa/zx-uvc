@@ -1,6 +1,8 @@
 #include "main.h"
 #include <stdio.h>
 #include "dcmi.h"
+#include "function_profiler.h"
+#include "micros.h"
 
 void (*copy_pixels)(void) = zx_copy_pix_gmx_pent;
 
@@ -56,7 +58,7 @@ void zx_copy_pix_gmx_pent(void)
   }
 }
 
-uint16_t zx_x = 384;
+extern uint16_t zx_x;
 void zx_copy_pix_uni(void)
 {
   uint8_t* buf_ptr = (uint8_t*)zx_buf_pent; 
@@ -68,12 +70,17 @@ void zx_copy_pix_uni(void)
   }
 }
 
+extern uint8_t* uvc_frame;
+
 int ZX_CAP_Proc(void) {
     if(DCMI_flag) {
+      uvc_cnt++;
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+      uint32_t start_copy_pixels = function_profiler_start();
       copy_pixels();
+      function_profiler_stop(&copy_pixels_prof, start_copy_pixels);
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-      UVC_flag = 1;
+      uvc_frame = (uint8_t *)&ucv_buf[uvc_cnt%2];
       DCMI_flag = 0;
       return 0;
     }

@@ -42,6 +42,9 @@
 
 #include "micros.h"
 
+// #include "function_profiler.h"
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -82,6 +85,15 @@ int ucmd_mcu_reset(int argc, char ** argv) {
   NVIC_SystemReset();
   return -1;
 }
+
+function_profiler_t copy_pixels_prof = FUNCTION_PROFILER_INIT("copy_pixels");
+
+int ucmd_zx_stat(int argc, char ** argv) {
+  function_profiler_show(&copy_pixels_prof);
+  return 0;
+}
+
+
 // define command list
 command_t cmd_list[] = {
   {
@@ -119,7 +131,12 @@ command_t cmd_list[] = {
     .help = "dcmi control",
     .fn   = ucmd_dcmi,
   },
-  
+
+  {
+    .cmd  = "stat",
+    .help = "stat",
+    .fn   = ucmd_zx_stat,
+  },
   {
     .cmd  = "coremark",
     .help = "coremark",
@@ -192,6 +209,7 @@ int main(void)
   
   dcmi_control('3');
   ucmd_default_init();
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -200,8 +218,13 @@ int main(void)
   {
     ucmd_default_proc();
     printf_flush();
-    if(ZX_CAP_Proc() != 0) {
-      delay_us(100);
+
+    // uint32_t start_ZX_CAP_Proc = function_profiler_start();
+    int ZX_CAP_Proc_ret = ZX_CAP_Proc();
+    // function_profiler_stop(&ZX_CAP_Proc_profiler, start_ZX_CAP_Proc);
+
+    if(ZX_CAP_Proc_ret != 0) {
+      delay_us(10);
     }
 
     /* USER CODE END WHILE */

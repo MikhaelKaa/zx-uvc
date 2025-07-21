@@ -94,6 +94,9 @@ C_SOURCES 	+= $(wildcard app/u_read_line/*.c)
 C_SOURCES 	+= $(wildcard app/mem/*.c)
 C_SOURCES 	+= $(wildcard app/coremark/*.c)
 
+C_SOURCES 	+= $(wildcard app/event_meter/*.c)
+C_SOURCES 	+= $(wildcard app/function_profiler/*.c)
+
 
 # ASM sources
 ASM_SOURCES =  \
@@ -189,6 +192,11 @@ C_INCLUDES += -Iapp/u_read_line/
 C_INCLUDES += -Iapp/micros/
 C_INCLUDES += -Iapp/mem/
 C_INCLUDES += -Iapp/coremark/
+
+C_INCLUDES += -Iapp/event_meter/
+C_INCLUDES += -Iapp/function_profiler/
+
+
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections

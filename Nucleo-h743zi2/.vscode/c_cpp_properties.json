@@ -25,7 +25,9 @@
                 "${workspaceFolder}/App/micros",
                 "${workspaceFolder}/App/u_read_line",
                 "${workspaceFolder}/App/mem",
-                "${workspaceFolder}/App/coremark"
+                "${workspaceFolder}/App/coremark",
+                "${workspaceFolder}/app/event_meter",
+                "${workspaceFolder}/app/function_profiler"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
