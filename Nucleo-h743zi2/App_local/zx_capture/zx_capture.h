@@ -14,6 +14,6 @@ void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
 void zx_copy_pix_uni(void);
 
-extern uint16_t zx_x;
+extern uint16_t zx_h_len;
 
 #endif /* ZX_CAPTURE */

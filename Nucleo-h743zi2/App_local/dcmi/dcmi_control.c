@@ -35,8 +35,10 @@ static volatile uint32_t dcmi_errors_event_cnt = 0;
 static volatile uint32_t dcmi_line_cnt = 0;
 static volatile uint32_t dcmi_line = 0;
 
-uint16_t test_offset = 3198;
-uint16_t zx_x = 384;
+// uint16_t zx_buf_len = 1 * ((((sizeof(zx_buf_pent)+0) / 2) / 4) - 3198);  // = 28418
+uint16_t zx_h_len = 384; // "константа" строки для желтого скорпа.
+uint32_t zx_buf_len = (384 * 296) * 2 + 12; // 227340
+
 volatile int offset_x = 0;
 volatile int offset_y = 0;
 
@@ -63,7 +65,7 @@ int ucmd_dcmi(int argc, char ** argv) {
             
             printf("dcmi_errors_event_cnt = %lu" ENDL, dcmi_errors_event_cnt);
             printf("dcmi_line = %lu" ENDL, dcmi_line);
-            printf("zx_x = %u" ENDL, zx_x);
+            printf("zx_h_len = %u" ENDL, zx_h_len);
             
             return 0;
         }
@@ -74,7 +76,7 @@ int ucmd_dcmi(int argc, char ** argv) {
                 printf("Invalid offset format" ENDL);
                 return -EINVAL;
             }
-            test_offset = offset;
+            zx_buf_len = offset;
             dcmi_control('3');
             return 0;
         }
@@ -109,11 +111,11 @@ int ucmd_dcmi(int argc, char ** argv) {
                 printf("Invalid offset format" ENDL);
                 return -EINVAL;
             }
-            if (sscanf(argv[3], "%hu", &zx_x) != 1) {
-                printf("Invalid zx_x format" ENDL);
+            if (sscanf(argv[3], "%hu", &zx_h_len) != 1) {
+                printf("Invalid zx_h_len format" ENDL);
                 return -EINVAL;
             }
-            test_offset = offset;
+            zx_buf_len = offset;
             dcmi_control('3');
             return 0;
         }
@@ -158,24 +160,14 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi) {
 
 
 // TODO:
-void dcmi_start_gmx_sc(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
-}
+// ((sizeof(zx_buf_pent)/4) - 3198) = 28418
+// (sizeof(zx_buf_pent)/4) = 31616
 
-void dcmi_start_gmx_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
-}
 
-void dcmi_start_pent(void) {
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Start_DMA return %d" ENDL, dcmi_ret);
-}
+
 void dcmi_start(void) {  
-    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, (sizeof(zx_buf_pent)/4) - test_offset);
-    printf("HAL_DCMI_Stop return %d" ENDL, dcmi_ret);
-    printf("WARNING!!! start with zx_buf_gmx_sc !!! for test only" ENDL);
+    int dcmi_ret = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)zx_buf_pent, zx_buf_len / 4);
+    printf("HAL_DCMI_Start return %d" ENDL, dcmi_ret);
 }
 
 void dcmi_stop(void) {  
@@ -245,18 +237,6 @@ void dcmi_show_settings(void) {
     printf("offset y = %d" ENDL, offset_y);
 }
 
-
-
-void inc_test_offset(void) {
-    test_offset++;
-    printf("inc test offset. TO = %d" ENDL, test_offset);
-}
-
-void dec_test_offset(void) {
-    test_offset--;
-    printf("dec test offset. TO = %d" ENDL, test_offset);
-}
-
 void load_gmx_scorpion_set(void) {
     dcmi_stop();
     copy_pixels = zx_copy_pix_gmx_sc;
@@ -266,23 +246,8 @@ void load_gmx_scorpion_set(void) {
     offset_x = 42;
     offset_y = 88;
     printf("Load GMX Scorpion settings" ENDL);
-    dcmi_start_gmx_sc();
+    dcmi_start();
 }
-void load_scorp_y_set(void) {
-    dcmi_stop();
-    copy_pixels = zx_copy_pix_uni;
-    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
-    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
-    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
-    offset_x = 42;
-    offset_y = -32;
-    printf("Load Scorpion settings" ENDL);
-    printf("test_offset = %u" ENDL, test_offset);
-    printf("zx_x = %u" ENDL, zx_x);
-    
-    dcmi_start_gmx_sc();
-}
-
 
 void load_gmx_pentagon_set(void) {
     dcmi_stop();
@@ -293,7 +258,21 @@ void load_gmx_pentagon_set(void) {
     offset_x = 40;
     offset_y = 88;
     printf("Load GMX Pentagon settings" ENDL);
-    dcmi_start_gmx_pent();
+    dcmi_start();
+}
+
+void load_scorp_y_set(void) {
+    dcmi_stop();
+    copy_pixels = zx_copy_pix_uni;
+    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+    offset_x = 42;
+    offset_y = -32;
+    printf("Load Scorpion settings" ENDL);
+    printf("zx_buf_len = %lu" ENDL, zx_buf_len);
+    printf("zx_h_len = %u" ENDL, zx_h_len);
+    dcmi_start();
 }
 
 void print_usage(void) {
@@ -324,8 +303,6 @@ void dcmi_control(uint8_t cmd) {
     case 'n': dcmi_toogle_VS_polarity(); break;
     case 'm': dcmi_toogle_PIXCLK_edge(); break;
     case 'p': dcmi_show_settings(); break;
-    case 'q': inc_test_offset(); break;
-    case 'a': dec_test_offset(); break;
     case '1': load_gmx_scorpion_set(); break;
     case '2': load_gmx_pentagon_set(); break;
     case '3': load_scorp_y_set(); break;

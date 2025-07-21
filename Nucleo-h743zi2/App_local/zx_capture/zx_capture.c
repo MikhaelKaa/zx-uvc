@@ -11,7 +11,7 @@ void (*copy_pixels)(void) = zx_copy_pix_gmx_pent;
 #pragma pack(push, 1)
 //RAM_D2 uint8_t zx_buf_gmx_sc[296][432];
 //RAM_D2 uint8_t zx_buf_gmx_pent[304][432];
-RAM_D2 uint8_t zx_buf_pent[304][432-16];
+RAM_D2 uint8_t zx_buf_pent[2][304][432-16];
 #pragma pack(pop)
 
 // Таблица соответствия пикселся спектрума (RGBI) пикселю RGB565.
@@ -44,7 +44,7 @@ void zx_copy_pix_gmx_sc(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+88]];
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[0][j+42][k+88]];
     }
   }
 }
@@ -53,18 +53,18 @@ void zx_copy_pix_gmx_pent(void)
 {
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[j+42][k+72]];
+      ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_pent[0][j+42][k+72]];
     }
   }
 }
 
-extern uint16_t zx_x;
+extern uint16_t zx_h_len;
 void zx_copy_pix_uni(void)
 {
   uint8_t* buf_ptr = (uint8_t*)zx_buf_pent; 
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
-      uint32_t index = (j + offset_x) * zx_x + (k + offset_y);
+      uint32_t index = (j + offset_x) * zx_h_len + (k + offset_y);
       ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[buf_ptr[index]];
     }
   }
