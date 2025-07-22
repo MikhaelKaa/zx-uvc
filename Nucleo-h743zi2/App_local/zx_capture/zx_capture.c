@@ -75,6 +75,7 @@ void zx_copy_pix_uni(void)
 
 void zx_copy_pix_scorp_yellow(void)
 {
+  // printf("uvc_frame = %p, zx_buf_ptr = %p\r\n", &ucv_buf[uvc_cnt%2], zx_buf_ptr);
   for(int j = 0; j < UVC_VIDEO_HEIGHT; j++) {
     for(int k = 0; k < UVC_VIDEO_WIDTH; k++) {
       ucv_buf[uvc_cnt%2][(UVC_VIDEO_HEIGHT-1)-j][k] = zx_pix_tab[zx_buf_ptr[(j + 42) * 384 + (k + -32)]];
@@ -87,13 +88,13 @@ extern uint8_t* uvc_frame;
 int ZX_CAP_Proc(void) {
     if(DCMI_flag) {
       zx_buf_ptr = zx_buf_nxt;
-      uvc_cnt++;
+      // uvc_cnt++;
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
       uint32_t start_copy_pixels = function_profiler_start();
       copy_pixels();
       function_profiler_stop(&copy_pixels_prof, start_copy_pixels);
       HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-      uvc_frame = (uint8_t *)&ucv_buf[uvc_cnt%2];
+      uvc_frame = (uint8_t *)&ucv_buf[uvc_cnt++%2];
       DCMI_flag = 0;
       return 0;
     }
