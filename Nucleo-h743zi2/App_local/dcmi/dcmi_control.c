@@ -24,7 +24,7 @@
 #endif // BAREMETAL
 
 extern DCMI_HandleTypeDef hdcmi;
-uint8_t DCMI_flag;
+volatile uint8_t DCMI_flag;
 uint8_t uvc_cnt = 0;
 
 event_meter_t vsync = EVENT_METER_INIT("vsync");
@@ -37,7 +37,7 @@ static volatile uint32_t dcmi_line = 0;
 
 // uint16_t zx_buf_len = 1 * ((((sizeof(zx_buf_pent)+0) / 2) / 4) - 3198);  // = 28418
 uint16_t zx_h_len = 384; // "константа" строки для желтого скорпа.
-uint32_t zx_buf_len = (384 * 296) * 2 + 12; // 227340
+uint32_t zx_buf_len = (384 * 296) * 2 + 14; // 227342
 
 volatile int offset_x = 0;
 volatile int offset_y = 0;
@@ -144,6 +144,11 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
     dcmi_line = dcmi_line_cnt;
     dcmi_line_cnt = 0;
     // 
+    if(zx_buf_nxt == (uint8_t*)zx_buf_pent) {
+        zx_buf_nxt = ((uint8_t*)zx_buf_pent) + (384 * 296) + 6;
+    } else {
+        zx_buf_nxt = (uint8_t*)zx_buf_pent;
+    }
     DCMI_flag = 1;
     uvc_frame = 0;
 }
@@ -263,7 +268,7 @@ void load_gmx_pentagon_set(void) {
 
 void load_scorp_y_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_uni;
+    copy_pixels = zx_copy_pix_scorp_yellow;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;

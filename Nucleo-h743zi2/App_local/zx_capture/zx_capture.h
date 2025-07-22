@@ -13,7 +13,10 @@ void init_pix_table(void);
 void zx_copy_pix_gmx_sc(void);
 void zx_copy_pix_gmx_pent(void);
 void zx_copy_pix_uni(void);
+void zx_copy_pix_scorp_yellow(void);
 
 extern uint16_t zx_h_len;
+extern volatile uint8_t* zx_buf_ptr;
+extern volatile uint8_t* zx_buf_nxt;
 
 #endif /* ZX_CAPTURE */

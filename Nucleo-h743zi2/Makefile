@@ -22,7 +22,7 @@ TARGET = nuc-h7-uvc
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O2
+OPT = -O1
 
 
 #######################################

@@ -72,7 +72,7 @@ extern uint16_t ucv_buf[2][UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 //extern uint16_t ucv_buf[UVC_VIDEO_HEIGHT][UVC_VIDEO_WIDTH];
 #endif
 
-extern uint8_t DCMI_flag;
+extern volatile uint8_t DCMI_flag;
 extern uint8_t uvc_cnt;
 
 extern function_profiler_t copy_pixels_prof;
