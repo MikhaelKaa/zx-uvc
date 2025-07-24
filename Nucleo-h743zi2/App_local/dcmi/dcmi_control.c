@@ -37,10 +37,12 @@ static volatile uint32_t dcmi_line = 0;
 
 uint16_t zx_h_len = 384; 
 uint32_t zx_buf_len = 127872 * 2;
-uint32_t zx_buf_off = 127872;     
+uint32_t zx_buf_off = 127872;  
+volatile int offset_x = 0;
+volatile int offset_y = 0;
 
 // Для GMX Пентагона 
-    // offset_x = 42
+    // offset_x = 40
     // offset_y = 88
     // zx_h_len = 432 
     // zx_buf_len = 262656;
@@ -59,8 +61,38 @@ uint32_t zx_buf_off = 127872;
     // zx_buf_len = 227342 ((384 * 296) * 2 + 14)
     // zx_buf_off = 113670 (сейчас там деление zx_buf_len на два.)
 
-volatile int offset_x = 0;
-volatile int offset_y = 0;
+
+typedef struct zx_set {
+    int offset_x;
+    int offset_y;
+    int zx_h_len;
+    int zx_buf_len;
+    int zx_buf_off;
+}zx_set_t;
+
+zx_set_t gmx_scorp = {
+    .offset_x = 42,
+    .offset_y = 88,
+    .zx_h_len = 432,
+    .zx_buf_len = 255744,
+    .zx_buf_off = 255744/2
+};
+
+zx_set_t gmx_pent = {
+    .offset_x = 40,
+    .offset_y = 88,
+    .zx_h_len = 432,
+    .zx_buf_len = 262656,
+    .zx_buf_off = 262656/2
+};
+
+zx_set_t scorp_yellow = {
+    .offset_x = 42,
+    .offset_y = -32,
+    .zx_h_len = 384,
+    .zx_buf_len = 227342,
+    .zx_buf_off = 113670
+};
 
 void print_usage(void);
 void dcmi_show_settings(void);
@@ -276,7 +308,7 @@ void load_gmx_scorpion_set(void) {
     offset_x = 42;
     offset_y = 88;
     zx_h_len = 432;
-    zx_buf_len = (127872 * 2);
+    zx_buf_len = 255744;
     printf("Load GMX Scorpion settings" ENDL);
     dcmi_start();
 }
