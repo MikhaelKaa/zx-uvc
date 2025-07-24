@@ -35,9 +35,29 @@ static volatile uint32_t dcmi_errors_event_cnt = 0;
 static volatile uint32_t dcmi_line_cnt = 0;
 static volatile uint32_t dcmi_line = 0;
 
-// uint16_t zx_buf_len = 1 * ((((sizeof(zx_buf_pent)+0) / 2) / 4) - 3198);  // = 28418
-uint16_t zx_h_len = 384; // "константа" строки для желтого скорпа.
-uint32_t zx_buf_len = (384 * 296) * 2 + 14; // 227342
+uint16_t zx_h_len = 384; 
+uint32_t zx_buf_len = 127872 * 2;
+uint32_t zx_buf_off = 127872;     
+
+// Для GMX Пентагона 
+    // offset_x = 42
+    // offset_y = 88
+    // zx_h_len = 432 
+    // zx_buf_len = 262656;
+
+// Для GMX Скорпиона 
+    // offset_x = 42
+    // offset_y = 88
+    // zx_h_len = 432 
+    // zx_buf_len = 127872 * 2;
+    // zx_buf_off = 127872
+
+// Для Желтого Скорпиона (Версия от Кротана)
+    // offset_x = 42
+    // offset_y = -32
+    // zx_h_len = 384 "константа" строки для желтого скорпа.
+    // zx_buf_len = 227342 ((384 * 296) * 2 + 14)
+    // zx_buf_off = 113670 (сейчас там деление zx_buf_len на два.)
 
 volatile int offset_x = 0;
 volatile int offset_y = 0;
@@ -66,6 +86,7 @@ int ucmd_dcmi(int argc, char ** argv) {
             printf("dcmi_errors_event_cnt = %lu" ENDL, dcmi_errors_event_cnt);
             printf("dcmi_line = %lu" ENDL, dcmi_line);
             printf("zx_h_len = %u" ENDL, zx_h_len);
+            printf("zx_buf_len = %lu" ENDL, zx_buf_len);
             
             return 0;
         }
@@ -77,7 +98,7 @@ int ucmd_dcmi(int argc, char ** argv) {
                 return -EINVAL;
             }
             zx_buf_len = offset;
-            dcmi_control('3');
+            dcmi_control('1');
             return 0;
         }
         
@@ -88,7 +109,7 @@ int ucmd_dcmi(int argc, char ** argv) {
             }
             offset_x = temp;
             printf("offset_x = %d" ENDL, offset_x);
-            dcmi_control('3');
+            dcmi_control('1');
             return 0;
         }
         
@@ -99,7 +120,7 @@ int ucmd_dcmi(int argc, char ** argv) {
             }
             offset_y = temp;
             printf("offset_y = %d" ENDL, offset_y);
-            dcmi_control('3');
+            dcmi_control('1');
             return 0;
         }
 
@@ -116,7 +137,7 @@ int ucmd_dcmi(int argc, char ** argv) {
                 return -EINVAL;
             }
             zx_buf_len = offset;
-            dcmi_control('3');
+            dcmi_control('1');
             return 0;
         }
         break;
@@ -144,11 +165,15 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi) {
     dcmi_line = dcmi_line_cnt;
     dcmi_line_cnt = 0;
     // 
+    #if 1
     if(zx_buf_nxt == (uint8_t*)zx_buf_pent) {
-        zx_buf_nxt = ((uint8_t*)zx_buf_pent) + (384 * 296) + 6;
+        zx_buf_nxt = ((uint8_t*)zx_buf_pent) + zx_buf_len/2;
     } else {
         zx_buf_nxt = (uint8_t*)zx_buf_pent;
     }
+    #else 
+    zx_buf_nxt = (uint8_t*)zx_buf_pent;
+    #endif
     DCMI_flag = 1;
     uvc_frame = 0;
 }
@@ -244,12 +269,14 @@ void dcmi_show_settings(void) {
 
 void load_gmx_scorpion_set(void) {
     dcmi_stop();
-    copy_pixels = zx_copy_pix_gmx_sc;
+    copy_pixels = zx_copy_pix_uni;
     hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
     offset_y = 88;
+    zx_h_len = 432;
+    zx_buf_len = (127872 * 2);
     printf("Load GMX Scorpion settings" ENDL);
     dcmi_start();
 }
@@ -257,11 +284,19 @@ void load_gmx_scorpion_set(void) {
 void load_gmx_pentagon_set(void) {
     dcmi_stop();
     copy_pixels = zx_copy_pix_gmx_pent;
+    #if 0
     hdcmi.Instance->CR |=  DCMI_CR_VSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_HSPOL_Msk;
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+    #else
+    hdcmi.Instance->CR &=  ~DCMI_CR_VSPOL_Msk;
+    hdcmi.Instance->CR |=  DCMI_CR_HSPOL_Msk;
+    hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
+    #endif
     offset_x = 40;
     offset_y = 88;
+    zx_h_len = 432;
+    zx_buf_len = 262656;
     printf("Load GMX Pentagon settings" ENDL);
     dcmi_start();
 }
@@ -274,7 +309,9 @@ void load_scorp_y_set(void) {
     hdcmi.Instance->CR &=  ~DCMI_CR_PCKPOL_Msk;
     offset_x = 42;
     offset_y = -32;
-    printf("Load Scorpion settings" ENDL);
+    zx_h_len = 384;
+    zx_buf_len = 227342;
+    printf("Load Yellow Scorpion settings" ENDL);
     printf("zx_buf_len = %lu" ENDL, zx_buf_len);
     printf("zx_h_len = %u" ENDL, zx_h_len);
     dcmi_start();

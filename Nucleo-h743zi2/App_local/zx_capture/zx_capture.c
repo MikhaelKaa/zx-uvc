@@ -12,7 +12,8 @@ void (*copy_pixels)(void) = zx_copy_pix_uni;
 #pragma pack(push, 1)
 //RAM_D2 uint8_t zx_buf_gmx_sc[296][432];
 //RAM_D2 uint8_t zx_buf_gmx_pent[304][432];
-RAM_D2 uint8_t zx_buf_pent[2][304][432-16];
+// RAM_D2 uint8_t zx_buf_pent[2][304][432-16];
+RAM_D2 uint8_t zx_buf_pent[2][304][432];
 #pragma pack(pop)
 
 // Таблица соответствия пикселся спектрума (RGBI) пикселю RGB565.

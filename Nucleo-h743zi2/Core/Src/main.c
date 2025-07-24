@@ -206,8 +206,8 @@ int main(void)
   printf("SystemCoreClock = %ld Hz\r\n", SystemCoreClock);
   printf("micros = %ld\r\n", micros());
   
-  
-  dcmi_control('3');
+
+  dcmi_control('1');
   ucmd_default_init();
   
   /* USER CODE END 2 */
