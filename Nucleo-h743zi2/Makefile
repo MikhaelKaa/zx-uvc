@@ -83,7 +83,7 @@ Core/Src/dcmi.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c
 
 C_SOURCES 	+= $(wildcard App/Retarget/*.c)
-C_SOURCES 	+= $(wildcard App/Terminal/src/*.c)
+#C_SOURCES 	+= $(wildcard App/Terminal/src/*.c)
 C_SOURCES 	+= $(wildcard App/dcmi/*.c)
 C_SOURCES 	+= $(wildcard App/zx_capture/*.c)
 
